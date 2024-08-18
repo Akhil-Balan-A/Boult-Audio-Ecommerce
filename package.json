@@ -1,0 +1,28 @@
+{
+  "name": "soundforge",
+  "version": "1.0.0",
+  "description": "An eCommerce platform for electronic smart devices",
+  "main": "app.js",
+  "scripts": {
+    "dev": "nodemon index.js"
+
+  },
+  "keywords": [
+    "ecommerce",
+    "electronics",
+    "smart",
+    "devices",
+    "technology"
+  ],
+  "author": "Akhil Balan A",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mongoose": "^8.5.3"
+  }
+}
