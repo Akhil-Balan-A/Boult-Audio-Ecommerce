@@ -1,5 +1,4 @@
-const User = require('../../models/userModel');
-
+const User = require('../../models/userSchema');
 
 const pageNotFound = async(req,res)=>{
     try{
@@ -19,19 +18,42 @@ const loadHomePage = async(req,res)=>{
     }
 }
 
-
-const loadRegister = async(req,res)=>{
+const loadLogin = async(req,res)=>{
     try{
-        res.render('user/login-or-register')
+        res.render('user/log-in')
 
     }catch(error){
-        console.log(error.message)
+        console.log(error.message);
+        res.status(500).send('server error')
     }
 }
 
+const loadSignup = async(req,res)=>{
+    try{
+        res.render('user/sign-up')
+    }catch(error){
+        console.log(error.message);
+        res.status(500).send("server error")
+    }
+}
+
+const signupUser = async(req,res)=>{
+    try{
+        const {name,email,phone,password} = req.body;
+        const newUser = new User({name,email,phone,password})
+        await newUser.save();
+        return res.redirect('/signup');
+        
+    }catch(error){
+        console.log("Error while saving user",error.message);
+        res.status(500).send('internal server error')
+    }
+}
 
 module.exports = {
     loadHomePage,
-    loadRegister,
-    pageNotFound
+    loadLogin,
+    pageNotFound,
+    loadSignup,
+    signupUser
 }

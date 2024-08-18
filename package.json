@@ -5,7 +5,6 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon index.js"
-
   },
   "keywords": [
     "ecommerce",
@@ -23,6 +22,7 @@
     "ejs": "^3.1.10",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
-    "mongoose": "^8.5.3"
+    "mongoose": "^8.5.3",
+    "uuid": "^10.0.0"
   }
 }

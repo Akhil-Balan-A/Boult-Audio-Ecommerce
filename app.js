@@ -27,8 +27,17 @@ const adminRoute = require('./src/routes/adminRoute');
 //start server.
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,()=>{
-    console.log(`Server running on the port ${PORT}....`)
+    console.log(`Server running on the port ${PORT}.... use npm run dev`)
 });
+
+
+
+
+
+
+
+
+
 
 
 

@@ -27,7 +27,9 @@ const userController = require('../controllers/user/userController');
 
 user_route.get('/pageNotFound',userController.pageNotFound)
 user_route.get('/',userController.loadHomePage);
-user_route.get('/login',userController.loadRegister);
+user_route.get('/login',userController.loadLogin);
+user_route.get('/signup',userController.loadSignup);
+user_route.post('/signup',userController.signupUser)
 
 
 module.exports = user_route;
