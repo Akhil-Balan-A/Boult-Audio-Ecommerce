@@ -1,0 +1,282 @@
+﻿<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="User/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link rel="stylesheet" href="User/css/main.css?v=3.4">
+    <style>
+        body {
+            
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .verification-container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            width: 100%;
+        }
+        .verification-container h2 {
+            margin-bottom: 20px;
+        }
+        .verification-container input {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .verification-container button {
+            width: 100%;
+            padding: 10px;
+            max-width: 300px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .verification-container button:disabled {
+            background-color: #aaa;
+        }
+        .timer {
+            margin: 15px 0;
+            color: #666;
+        }
+        
+        .resend-link:hover {
+            background-color: #0B645A;
+            text-decoration: none;
+        }
+    </style>
+    
+</head>
+<body>
+    <header class="header-area header-style-5 border" >
+        <div class="header-bottom sticky-bar sticky-white-bg">
+            <div class="container">
+                <div class="header-wrap header-space-between position-relative">
+                    <div class="logo logo-width-1">
+                        <a href="index.html"><img src="User/imgs/theme/logo.svg" alt="logo"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="mobile-header-active mobile-header-wrapper-style">
+        <div class="mobile-header-wrapper-inner">
+            <div class="mobile-header-top">
+                <div class="mobile-header-logo">
+                    <a href="index.html"><img src="User/imgs/theme/logo.svg" alt="logo"></a>
+                </div>
+                <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
+                    <button class="close-style search-close">
+                        <i class="icon-top"></i>
+                        <i class="icon-bottom"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="mobile-header-content-area">
+                    <!-- mobile menu start -->
+                    <nav>
+                        
+                    </nav>
+                    <!-- mobile menu end -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <main class="main">
+        
+        <section class="pt-100 pb-150">
+            <div class="container verification-container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-5">
+                                <div class="login_wrap widget-taber-content p-30 background-white border-radius-10 mb-md-5 mb-lg-0 mb-sm-5">
+                                    <div class="padding_eight_all bg-white">
+                                        <div class="heading_s1">
+                                            <h3 class="mb-30">Email Verification</h3>
+                                            <p>Please enter the OTP sent to your email.</p>
+                                        </div>
+                                        <form method="post" action="/verify-otp" onsubmit="return validateOTPForm()" id="otpForm">
+                                            <div class="form-group">
+                                                <input type="text" required name="otp" placeholder="Enter OTP" maxlength="" pattern="\d*" id="otp">
+                                                <button type="submit" >Verify Email</button>
+                                            </div>
+                                            <div class="otp-timer" id="otpTimer">
+                                                OTP Status: <span id="timerVal"> 60 </span>
+                                            </div>
+                                            <button type="button" onclick="resendOtp()" class="resend-link">Resend OTP</button>
+                                            <% if (locals.message && mesage.length>0){%>
+                                                <div class="alert alert-danger"><%=message%></div>
+                                            <%}%>
+                                        </form>
+                                        <div class="text-muted text-center pt-25">
+                                            Already verified?<a class="login-link" href="/login">Login now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>    
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Preloader Start -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="text-center">
+                    <h5 class="mb-5">Now Loading</h5>
+                    <div class="loader">
+                        <div class="bar bar1"></div>
+                        <div class="bar bar2"></div>
+                        <div class="bar bar3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Vendor JS-->
+    <script src="User/js/vendor/modernizr-3.6.0.min.js"></script>
+    <script src="User/js/vendor/jquery-3.6.0.min.js"></script>
+    <script src="User/js/vendor/jquery-migrate-3.3.0.min.js"></script>
+    <script src="User/js/vendor/bootstrap.bundle.min.js"></script>
+    <script src="User/js/plugins/slick.js"></script>
+    <script src="User/js/plugins/jquery.syotimer.min.js"></script>
+    <script src="User/js/plugins/wow.js"></script>
+    <script src="User/js/plugins/jquery-ui.js"></script>
+    <script src="User/js/plugins/perfect-scrollbar.js"></script>
+    <script src="User/js/plugins/magnific-popup.js"></script>
+    <script src="User/js/plugins/select2.min.js"></script>
+    <script src="User/js/plugins/waypoints.js"></script>
+    <script src="User/js/plugins/counterup.js"></script>
+    <script src="User/js/plugins/jquery.countdown.min.js"></script>
+    <script src="User/js/plugins/images-loaded.js"></script>
+    <script src="User/js/plugins/isotope.js"></script>
+    <script src="User/js/plugins/scrollup.js"></script>
+    <script src="User/js/plugins/jquery.vticker-min.js"></script>
+    <script src="User/js/plugins/jquery.theia.sticky.js"></script>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <!-- SweetAlert via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Template  JS -->
+    <script src="./User/js/main.js?v=3.4"></script>
+    <script>
+        let timer = 60;
+        function startTimer(){
+            timerInterval = setInterval(()=>{
+                timer--;
+                document.getElementById("timerVal").textContent = timer;
+                if(timer <= 0){
+                    clearInterval(timerInterval);
+                    document.getElementById("timerVal").classList.add('expired');
+                    document.getElementById("timerVal").textContent = "Expired";
+                    document.querySelector('input[name="otp"]').disabled = true;
+                }
+            },1000)
+        }
+
+
+        startTimer();
+
+        function validateOTPForm() {
+    const otpInput = document.getElementById('otp').value;
+
+    $.ajax({
+        type: "POST",
+        url: "/verify-otp",
+        data: { otp: otpInput },
+        success: function (response) {
+            if (response.success) {
+                Swal.fire({
+                    title: "Success!",
+                    icon: "success",
+                    text: "Your OTP has been verified successfully",
+                    showConfirmButton: false,
+                    timer: 1500,
+                }).then((result) => {
+                    if (result.isConfirmed || result.dismiss) {
+                        window.location.href = response.redirectUrl;
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: 'Error',
+                    text: response.message,
+                });
+            }
+        },
+        error: function () {
+            Swal.fire({
+                icon: "error",
+                title: 'Invalid OTP',
+                text: "Please try again.",
+                confirmButtonText: 'OK'
+            });
+        }
+    });
+
+    return false; // Prevent form submission
+}
+
+function resendOtp(){
+    clearInterval(timerInterval);
+    timer=60;
+    document.getElementById('otp').disabled=false;
+    document.getElementById("timerVal").classList.remove("expired");
+    startTimer();
+    $.ajax({
+        type:"POST",
+        url:"/resend-otp",
+        success:function(response){
+            if(response.success){
+                Swal.fire({
+                    icon:"success",
+                    title:"OTP resend successfully",
+                    showConfirmButton:false,
+                    timer:1500
+                });
+            }else{
+                Swal.fire({
+                    icon:'error',
+                    title:"Error",
+                    text:"An error occured while resending OTP, Please try again",
+
+
+                })
+            }
+        },
+        error: function() {
+            Swal.fire({
+                icon: 'error',
+                title: "Error",
+                text: "An error occurred while resending OTP. Please try again.",
+            });
+        }
+    });
+    return false;
+}
+
+    </script>
+</body>
+
+</html>

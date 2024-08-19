@@ -1,15 +1,7 @@
 const express = require('express');
 const user_route = express.Router();
-const session = require('express-session');
 const cookieParser = require('cookie-parser');
 
-
-user_route.use(session({
-    secret:process.env.SESSIONSECRETUSER,
-    resave:false,
-    saveUninitialized:true,
-    cookie:{maxAge:60000000}
-}));
 
 user_route.use(cookieParser());
 
@@ -29,7 +21,10 @@ user_route.get('/pageNotFound',userController.pageNotFound)
 user_route.get('/',userController.loadHomePage);
 user_route.get('/login',userController.loadLogin);
 user_route.get('/signup',userController.loadSignup);
-user_route.post('/signup',userController.signupUser)
+user_route.post('/signup',userController.signupUser);
+user_route.get('/samplepage',userController.anyPageSampleRender)////////////////////////
+user_route.post('/verify-otp',userController.verifyOtp);
+user_route.post("/resend-otp",userController.resendOtp);
 
 
 module.exports = user_route;

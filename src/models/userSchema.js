@@ -27,10 +27,9 @@ const userSchema = new mongoose.Schema({
         sparse:true,
         default:null
     },
-    googleId:{
-        type:String,
-        unique:true,
-
+    termsAccepted:{
+        type:Boolean,
+        required:true
     },
     registrationDate:{
         type: Date,
@@ -39,10 +38,6 @@ const userSchema = new mongoose.Schema({
     is_verified:{
         type: Boolean,
         default: false
-    },
-    token:{
-        type:String,
-        default:''
     },
     is_blocked:{
         type:Boolean,
