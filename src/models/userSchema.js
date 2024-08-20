@@ -20,12 +20,11 @@ const userSchema = new mongoose.Schema({
         required: false,
         
     },
-    phoneNumber:{
+    phone:{
         type: String,
-        required: false,
-        unique:false,
+        required: true,
+        unique:true,
         sparse:true,
-        default:null
     },
     termsAccepted:{
         type:Boolean,

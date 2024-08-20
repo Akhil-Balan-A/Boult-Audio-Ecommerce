@@ -1,32 +1,57 @@
-const isLogin = (req,res,next)=>{
-    try{
-        if(req.session.user_id){
-            next();
-        }else{
-            res.redirect('/register')
-        }
-    }catch(error){
-        console.log(error.message);
-        res.status(500).send("Internal Server Error");
-    }
-};
+const User = require("../models/userSchema");
 
 
-const isLogout = (req,res,next)=>{
-    try{
-        if(req.session.user_id){
-            res.redirect('/home')
-        }else{
-            next();
-        }
-    }catch(error){
-        console.log(error.message);
-        res.status(500).send('internal Server Error')
+
+const userAuth = (req,res,next)=>{
+    if(req.session.user){
+        User.findById(req.session.user)
+        .then(data=>{
+            if(data){
+                if(data&&!data.is_blocked){
+                    next();
+                }else{
+                    res.redirect("/login")
+                }
+            }
+        })
+        .catch(error=>{
+            console.log('Error in user auth middleware');
+            res.status(500).send('internal server error');
+        })
+    }else{
+        res.redirect("/login")
     }
-};
+}
+
+const adminAuth = (req,res,next)=>{
+    User.findOne({isAdmin:true})
+    .then(data=>{
+        if(data){
+            next()
+        }else{
+            res.redirect("/admin/login")
+        }
+    })
+    .catch(error=>{
+        console.log("Error in adminauth middleware",error);
+        res.status(500).send("internal Server Error")
+    })
+}
+
+
+
+
 
 
 module.exports = {
-    isLogin,
-    isLogout
-};
+    userAuth,
+    adminAuth
+}
+
+
+
+
+
+
+
+

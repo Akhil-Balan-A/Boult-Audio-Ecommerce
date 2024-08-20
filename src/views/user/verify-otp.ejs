@@ -44,7 +44,7 @@
             width: 100%;
             padding: 10px;
             max-width: 300px;
-            background-color: #28a745;
+            background-color: #108a7c;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -61,6 +61,38 @@
         .resend-link:hover {
             background-color: #0B645A;
             text-decoration: none;
+        }
+        .resend-link{
+            margin-top: 20px;
+        }
+        .otp-timer{
+            display: inline-block;
+            margin-left: 10px;
+            font-size: 14px;
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            line-height: 60px;
+            text-align: center;
+            background:#f2f2f2;
+            border: 2px solid #ddd;
+            box-shadow: 0 2px 5px rgb(0,0,0,0.1);
+
+        }
+        #timerVal{
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            line-height: 60px;
+        }
+        #timerVal.expired{
+            font-size: 14px;
+            color: red;
+        }
+        .verify-email{
+            margin-top: 20px;
         }
     </style>
     
@@ -117,18 +149,18 @@
                                         <form method="post" action="/verify-otp" onsubmit="return validateOTPForm()" id="otpForm">
                                             <div class="form-group">
                                                 <input type="text" required name="otp" placeholder="Enter OTP" maxlength="" pattern="\d*" id="otp">
-                                                <button type="submit" >Verify Email</button>
+                                                <button type="submit" class="verify-email btn btn-fill-out btn-block hover-up" >Verify Email</button>
                                             </div>
                                             <div class="otp-timer" id="otpTimer">
-                                                OTP Status: <span id="timerVal"> 60 </span>
+                                                <span id="timerVal"> 60 </span>
                                             </div>
-                                            <button type="button" onclick="resendOtp()" class="resend-link">Resend OTP</button>
+                                            <button type="button" onclick="resendOtp()" class="resend-link btn btn-fill-out btn-block hover-up">Resend OTP</button>
                                             <% if (locals.message && mesage.length>0){%>
                                                 <div class="alert alert-danger"><%=message%></div>
                                             <%}%>
                                         </form>
                                         <div class="text-muted text-center pt-25">
-                                            Already verified?<a class="login-link" href="/login">Login now</a>
+                                            Already verified? <a class="login-link" href="/login"> Login now </a>
                                         </div>
                                     </div>
                                 </div>

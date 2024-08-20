@@ -49,20 +49,33 @@ const pageNotFound = async(req,res)=>{
 
 const loadHomePage = async(req,res)=>{
     try{
-        return res.render('user/home')
+        const user = req.session.user;
+        if(user){
+            const userData = await User.findOne({_id:user});
+            res.render("user/home",{user:userData})
+        }else{
+            res.render("user/home");
+
+        }
     }catch(error){
         console.log('Home page not found');
         res.status(500).send('Server error')
     }
 }
 
+
 const loadLogin = async(req,res)=>{
     try{
-        res.render('user/log-in')
+        if(!req.session.user){
+            return res.render('user/log-in')
+        }else{
+            res.redirect('/');
+        }
 
     }catch(error){
         console.log(error.message);
         res.status(500).send('server error')
+        res.redirect("/pageNotFound")
     }
 }
 
@@ -79,16 +92,16 @@ const signupUser = async(req,res)=>{
     try{
         const {name,email,phone,password,confirm_password,termsAccepted} = req.body;
         if(password!==confirm_password){
-            return res.render("signup",{message:"Password do not match!"})
+            return res.render("user-sign-up",{message:"Password do not match!"})
         }
         const findUserByEmail = await User.findOne({email});
         const findUserByPhone = await User.findOne({phone});
         if(findUserByEmail&&findUserByPhone){
-            return res.render("signup",{message:"User with this email and Phone number already exists!"});
+            return res.render("user/sign-up",{message:"User with this email and Phone number already exists!",color:'danger'});
         }else if(findUserByEmail){
-            return res.render("signup",{message:"Email already in Use!"})
-        }else if(findUserByPhone){
-            return res.render("signup",{message:"Mobile number already in Use!"})
+            return res.render("user/sign-up",{message:"Email already in Use!",color:'danger'})
+        }else if(findUserByPhone===phone){
+            return res.render("user/sign-up",{message:"Mobile number already in Use!",color:'danger'})
         }
         const otp = generateOtp();
         const emailSent = await sendVerificationEmail(email,otp);
@@ -104,8 +117,8 @@ const signupUser = async(req,res)=>{
      
     }catch(error){
         console.error("sign up error",error.message);
-        res.redirect("/pageNotFound")
         res.status(500).send('internal server error')
+        res.redirect("/pageNotFound")
     }
     
 }
@@ -179,6 +192,47 @@ const resendOtp = async(req,res)=>{
     }
 }
 
+const login = async(req,res)=>{
+    try {
+        const {email,password,rememberMe} = req.body;
+        const findUser = await User.findOne({isAdmin:0,email:email,});
+        if(!findUser){
+            return res.render("user/log-in",{message:"User not found",color:"danger"});
+        }
+        if(findUser.is_blocked){
+            return res.render("user/log-in",{message:"User is blocked by admin",color:"danger"})
+        }
+        const passwordMatch = await bcrypt.compare(password,findUser.password);
+        if(!passwordMatch){
+            return res.render("user/log-in",{message:"Incorrect password",color:"danger"})
+        }
+        if(rememberMe){
+            req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days;
+        }
+        req.session.user = findUser._id;
+        res.redirect('/');
+    } catch (error) {
+        console.error("login error",error);
+        res.render('user/log-in',{message:"login failed. Please try again later",color:'danger'});
+    }
+}
+
+const logout = async(req,res)=>{
+    try {
+
+        req.session.destroy((err)=>{
+            if(err){
+                console.log('Session destruction error');
+                return res.redirect("/pageNotFound")
+            }
+            return res.redirect("/login")
+        })
+        
+    } catch (error) {
+        console.log('Logout error',error);
+        res.redirect("/pageNotFound")
+    }
+}
 
 module.exports = {
     loadHomePage,
@@ -188,6 +242,11 @@ module.exports = {
     signupUser,
     anyPageSampleRender,
     verifyOtp,
-    resendOtp
+    resendOtp,
+    login,
+    logout
 }
+
+
+
 

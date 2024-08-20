@@ -18,11 +18,10 @@ app.use(session({
     cookie:{
         secure:false,//in product can be change to true as https usage
         httpOnly:true,
-        maxAge:72*60*60*1000
+        maxAge:24*60*60*1000 //24 hours validity
     }
 
 }));
-
 
 //set view engine to EJS.
 app.set('view engine','ejs');
@@ -32,19 +31,22 @@ app.set('views',path.join(__dirname,'src/views'));
 app.use('/Admin',express.static(path.join(__dirname,'public/Admin')));
 app.use('/User',express.static(path.join(__dirname,'public/User')));
 
+
 //for user routes.
 const userRoute = require('./src/routes/userRoute');
 app.use('/',userRoute);
 
+
 //for admin routes.
 const adminRoute = require('./src/routes/adminRoute');
-// app.use('/admin',adminRoute);
+app.use('/admin',adminRoute);
 
 //start server.
 const PORT = process.env.PORT || 3000;
 app.listen(PORT,()=>{
     console.log(`Server running on the port ${PORT}.... use npm run dev`)
 });
+
 
 
 

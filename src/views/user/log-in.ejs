@@ -18,7 +18,7 @@
 </head>
 
 <body>
-    <header class="header-area header-style-5">
+    <header class="header-area header-style-5 border" >
         <div class="header-top header-top-ptb-1 d-none d-lg-block">
             <div class="container">
                 <div class="row align-items-center">
@@ -432,16 +432,7 @@
         </div>
     </div>
     <main class="main">
-        <div class="page-header breadcrumb-wrap">
-            <div class="container">
-                <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow">Home</a>
-                    <span></span> Pages
-                    <span></span> Login
-                </div>
-            </div>
-        </div>
-        <section class="pt-150 pb-150">
+        <section class="pt-80 pb-150">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-10 m-auto">
@@ -452,7 +443,18 @@
                                         <div class="heading_s1">
                                             <h3 class="mb-30">Login</h3>
                                         </div>
-                                        <form method="post">
+                                        <% if (typeof message !== 'undefined') { %>
+                                            <% if(color==='danger') { %>
+                                                <div class="alert alert-danger text-center" role="alert">
+                                                    <p><%- message %></p>
+                                                </div>
+                                            <% } else { %>
+                                                <div class="alert alert-success text-center" role="alert">
+                                                    <p><%- message %></p>
+                                                </div>
+                                            <% } %>
+                                        <% } %>
+                                        <form method="post" action="/login">
                                             <div class="form-group">
                                                 <input type="text" required="" name="email" placeholder="Your Email">
                                             </div>
@@ -462,8 +464,8 @@
                                             <div class="login_footer form-group">
                                                 <div class="chek-form">
                                                     <div class="custome-checkbox">
-                                                        <input class="form-check-input" type="checkbox" name="checkbox" id="exampleCheckbox1" value="">
-                                                        <label class="form-check-label" for="exampleCheckbox1"><span>Remember me</span></label>
+                                                        <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe" value="true">
+                                                        <label class="form-check-label" for="rememberMe"><span>Remember me</span></label>
                                                     </div>
                                                 </div>
                                                 <a class="text-muted" href="#">Forgot password?</a>
@@ -472,7 +474,7 @@
                                                 <button type="submit" class="btn btn-fill-out btn-block hover-up" name="login">Log in</button>
                                             </div>
                                         </form>
-                                        <div class="text-muted text-center">Don't have an account? <a href="/sign-up">Sign up now</a></div>
+                                        <div class="text-muted text-center">Don't have an account? <a href="/signup">Sign up now</a></div>
                                     </div>
                                 </div>
                             </div>
@@ -481,6 +483,8 @@
             </div>
         </section>
     </main>
+    <%-include("../../views/partials/user/footer")-%>
+
 
     <!-- Preloader Start -->
     <div id="preloader-active">
