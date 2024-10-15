@@ -1,10 +1,9 @@
 const mongoose = require("mongoose");
-const {Schema} = mongoose;
-
-const userSchema = new mongoose.Schema({
+    const {Schema} = mongoose;
+const userSchema = new Schema({
     name:{
         type: String,
-        required: true,
+        required: false,
         minlength:2,
         maxlength:20
     },
@@ -14,17 +13,26 @@ const userSchema = new mongoose.Schema({
         unique: true,
         lowercase: true,
 
+
     },
     password:{
         type: String,
-        required: false,
-        
+        required:false, 
     },
     phone:{
         type: String,
-        required: true,
-        unique:true,
+        required:false,
+        unique:true,//need to set true after null is managed in the google signup
         sparse:true,
+        default:undefined
+    },
+    googleId:{
+        type:String,
+        unique:true
+    },
+    googleId:{
+        type:String,
+        unique:true,
     },
     termsAccepted:{
         type:Boolean,
@@ -34,11 +42,11 @@ const userSchema = new mongoose.Schema({
         type: Date,
         default:Date.now
     },
-    is_verified:{
+    isVerified:{
         type: Boolean,
         default: false
     },
-    is_blocked:{
+    isBlocked:{
         type:Boolean,
         default:false  
     },

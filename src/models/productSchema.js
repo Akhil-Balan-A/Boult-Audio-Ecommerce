@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const {Schema} = mongoose;
 
 
-const productSchema = new mongoose.Schema({
+const productSchema = new Schema({
     productName:{
         type:String,
         required:true
@@ -16,11 +16,11 @@ const productSchema = new mongoose.Schema({
         ref:'Category',
         required:true
     },
-    regularPrice:{
+    regularPrice:{//price before offer
         type:Number,
         required:true
     },
-    salePrice:{
+    salePrice:{ // price after offer 
         type:Number,
         required:true
     },

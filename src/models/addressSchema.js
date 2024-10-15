@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
 
-const addressSchema = new mongoose.Schema({
+const addressSchema = new Schema({
     userId:{
         type:Schema.Types.ObjectId,
         ref:'User',
@@ -15,7 +15,8 @@ const addressSchema = new mongoose.Schema({
         name:{
             type:String,
             required:true
-        },city:{
+        },
+        city:{
             type:String,
             required:true
         },

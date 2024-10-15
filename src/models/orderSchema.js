@@ -25,6 +25,15 @@ const orderSchema = new mongoose.Schema({
             default:0,
             required:true,
             min:0
+        },
+        itemStatus:{//item wise status
+            type:String,
+            required:true,
+            enum:["Processing","Order Confirmed","Shipped","Delivered","Cancelled","Return Request","Returned"],//once payment confirmed the order will become confirmed
+            default:"Processing"
+        },
+        itemCancelledDate: {//itemwise cancel date
+            type: Date
         }
     }],
     totalPrice:{
@@ -51,17 +60,17 @@ const orderSchema = new mongoose.Schema({
         type:Date,
         default:Date.now
     },
-    status:{
+    orderStatus:{//entire ordewise status
         type:String,
         required:true,
-        enum:["Pending","Processing","Shipped","Delivered","Cancelled","Return Request","Returned"],
-        default:"Pending"
+        enum:["Processing","Order Confirmed","Shipped","Delivered","Cancelled","Return Request","Returned"],//once payment confirmed the order will become confirmed
+        default:"Processing"
     },
     couponApplied:{
         type:Boolean,
         default:false
     },
-    cancelledDate: {
+    orderCancelledDate: {//entire ordewise cancel date
         type: Date,
     },
     shippingCharges: {

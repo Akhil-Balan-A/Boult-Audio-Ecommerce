@@ -4,6 +4,7 @@ const path = require('path');
 require('dotenv').config();
 require('./src/config/dbConnect')();
 const session = require('express-session');
+const passport = require('./src/config/passport')
 
 
 // Middleware to parse JSON and URL-encoded data
@@ -23,6 +24,11 @@ app.use(session({
 
 }));
 
+// Initialize Passport and session
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 //set view engine to EJS.
 app.set('view engine','ejs');
 app.set('views',path.join(__dirname,'src/views'));
@@ -35,7 +41,6 @@ app.use('/User',express.static(path.join(__dirname,'public/User')));
 //for user routes.
 const userRoute = require('./src/routes/userRoute');
 app.use('/',userRoute);
-
 
 //for admin routes.
 const adminRoute = require('./src/routes/adminRoute');

@@ -18,9 +18,22 @@ const bannerSchema = new mongoose.Schema({
     link:{
         type:String,
     },
-    endDate:{
-        type:Date,
-        required:true
+    category: {
+        type: String,
+        // enum: [add here the categories available], // Enum to limit categories***********************
+        required: true,
+    },
+    startDate: {
+        type: Date,
+        required: true, // Start date for the banner visibility
+    },
+    endDate: {
+        type: Date,
+        required: true, // End date for the banner visibility
+    },
+    isActive: {
+        type: Boolean,
+        default: true, // To activate or deactivate the banner
     }
 
 },{timestamps:true});

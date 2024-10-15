@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: auto;
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container {
+            flex: 1;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-container h2 {
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-container input[type="text"],
+        .form-container input[type="email"],
+        .form-container input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+        }
+
+        .form-container input[type="text"]:focus,
+        .form-container input[type="email"]:focus,
+        .form-container input[type="password"]:focus {
+            border-color: #00ffbf;
+            outline: none;
+        }
+
+        .form-container input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+        }
+
+        .google-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 30px;
+            background-color: #08816b;
+            /* Button color */
+            color: white;
+            /* White text */
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            margin-top: 25px;
+            transition: transform 0.2s, background-color 0.3s;
+            /* Added transition for hover */
+        }
+
+        .google-btn:hover {
+            background-color: #046963;
+            /* Color on hover */
+            transform: translateY(-2px);
+            /* Move up on hover */
+        }
+
+        .info-container {
+            flex: 1;
+            padding: 40px;
+            background: #046963;
+            /* Updated color */
+            border-radius: 10px 0 0 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            /* White text for all content */
+        }
+
+        .info-container img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        .info-container h3,
+        .info-container p {
+            margin: 10px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                border-radius: 10px;
+            }
+
+            .form-container,
+            .info-container {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-container">
+            <h2>Sign Up</h2>
+            <form action="#">
+                <input type="text" name="username" placeholder="Username" required />
+                <input type="email" name="email" placeholder="Email" required />
+                <input type="password" name="password" placeholder="Password" required />
+                <input type="submit" value="Sign Up" />
+                <button class="google-btn">
+                    <span class="icon"><img src="https://i.ibb.co/x5Hb7YC/google.png" alt="Login With Google" /></span>
+                    Login with Google
+                </button>
+            </form>
+        </div>
+
+        <div class="info-container">
+            <img src="../public/user/imgs/theme/boult-audio-intro image.png" alt="Welcome Image" />
+            <h3>Looks like you're new here!</h3>
+            <p>Sign up here to get started.</p>
+        </div>
+    </div>
+</body>
+
+</html>
