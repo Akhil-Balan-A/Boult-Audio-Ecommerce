@@ -1,5 +1,12 @@
-﻿
-<%-include("../../views/partials/User/header")-%>
+﻿<style>
+       /* Custom CSS to make the SweetAlert smaller */
+       .swal2-popup {
+        width: 300px; /* Set the desired width */
+        padding: 20px; /* Set the padding */
+        
+    }
+</style>
+<%-include("../../views/partials/user/header")-%>
     <main class="main">
         <section class="home-slider position-relative">
             <div class="hero-slider-1 style-2 dot-style-1 dot-style-1-position-1">
@@ -2094,7 +2101,7 @@
                                                 </div>
                                                 <div class="product-action-1">
                                                     <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-eye"></i></a>
+                                                    <i class="fi-rs-eye"></i></a>
                                                     <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                     <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                                 </div>
@@ -2131,7 +2138,7 @@
                                                 </div>
                                                 <div class="product-action-1">
                                                     <a aria-label="Quick view" class="action-btn small hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal">
-<i class="fi-rs-eye"></i></a>
+                                                    <i class="fi-rs-eye"></i></a>
                                                     <a aria-label="Add To Wishlist" class="action-btn small hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
                                                     <a aria-label="Compare" class="action-btn small hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                                 </div>
@@ -2513,7 +2520,32 @@
     <!-- Template  JS -->
     <script src="./User/js/main.js?v=3.4"></script>
     <script src="./User/js/shop.js?v=3.4"></script>
-    <%-include("../../views/partials/User/footer")-%>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessage = '<%= messages.success %>'; // Use EJS to access flash messages
+    
+            if (successMessage) {
+                Swal.fire({
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInUp animate__faster'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutDown animate__faster'
+                    },
+                    
+                    title: 'Success!',
+                    text: successMessage,
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 2300, // Set timer for 2.3 seconds
+                    timerProgressBar: true, // Show a progress bar
+                });
+            }
+        });
+    </script>
+    
+    <%-include("../../views/partials/user/footer")-%>
 </body>
 
 </html>

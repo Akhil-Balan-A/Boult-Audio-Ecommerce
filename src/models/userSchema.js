@@ -12,8 +12,7 @@ const userSchema = new Schema({
         required: true,
         unique: true,
         lowercase: true,
-
-
+    
     },
     password:{
         type: String,
@@ -28,11 +27,9 @@ const userSchema = new Schema({
     },
     googleId:{
         type:String,
-        unique:true
-    },
-    googleId:{
-        type:String,
-        unique:true,
+        // unique: true,   // as google uses uniqu googleId, and sparese no working properly making it duplicate error , commenting it.
+        sparse: true    // Allow multiple nulls for non-Google users
+        
     },
     termsAccepted:{
         type:Boolean,
@@ -53,6 +50,14 @@ const userSchema = new Schema({
     isAdmin:{
         type:Boolean,
         default:false
+    },
+    token:{
+        type:String,
+        default:''
+    },
+    tokenExpiry:{
+        type:Date,
+        required:false
     },
     defaultPaymentMethod: {
         type: String,
@@ -102,4 +107,7 @@ const userSchema = new Schema({
 },{timestamps:true});
 const User = mongoose.model('User', userSchema);
 module.exports = User; 
+
+
+
 

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+}
+
+.login-container {
+    max-width: 400px;
+    margin: 100px auto;
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+}
+
+.error {
+    color: red;
+    display: none;
+}
+
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 40px; /* Space for the eye icon */
+}
+
+#togglePassword {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <form id="loginForm">
+            <h2>Login</h2>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+            <span id="errorEmail" class="error"></span>
+
+            <label for="password">Password</label>
+            <div class="password-wrapper">
+                <input type="password" id="password" name="password" required>
+                <span id="togglePassword">&#128065;</span> <!-- Eye icon -->
+            </div>
+            <span id="errorPassword" class="error"></span>
+
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const errorEmail = document.getElementById('errorEmail');
+    const errorPassword = document.getElementById('errorPassword');
+    const loginForm = document.getElementById('loginForm');
+    const togglePassword = document.getElementById('togglePassword');
+
+    // Email Validation
+    function checkEmailValidation() {
+        const emailVal = email.value;
+        const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!emailPattern.test(emailVal)) {
+            errorEmail.style.display = 'block';
+            errorEmail.innerHTML = 'Invalid email format';
+            return false;
+        } else {
+            errorEmail.style.display = 'none';
+            return true;
+        }
+    }
+
+    // Password Validation
+    function checkPasswordValidation() {
+        const passwordVal = password.value;
+        const alphabet = /[a-zA-Z]/;
+        const digit = /\d/;
+        const specialChar = /[@$!%*?&]/;
+
+        if (passwordVal.length < 8) {
+            errorPassword.style.display = 'block';
+            errorPassword.innerHTML = "Password must contain at least 8 characters";
+            return false;
+        } else if (!alphabet.test(passwordVal) || !digit.test(passwordVal)) {
+            errorPassword.style.display = 'block';
+            errorPassword.innerHTML = 'Password must contain both letters and numbers';
+            return false;
+        } else if (!specialChar.test(passwordVal)) {
+            errorPassword.style.display = 'block';
+            errorPassword.innerHTML = 'Password must contain at least one special character (@$!%*?&)';
+            return false;
+        } else {
+            errorPassword.style.display = 'none';
+            return true;
+        }
+    }
+
+    // Toggle Password Visibility
+    togglePassword.addEventListener('click', () => {
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        togglePassword.innerHTML = type === 'password' ? '&#128065;' : '&#128586;';
+    });
+
+    // Form Submit Event
+    loginForm.addEventListener('submit', (e) => {
+        const isEmailValid = checkEmailValidation();
+        const isPasswordValid = checkPasswordValidation();
+
+        // Prevent form submission if any errors are present
+        if (!isEmailValid || !isPasswordValid) {
+            e.preventDefault();
+        }
+    });
+});
+
+    </script>
+
+</body>
+</html>

@@ -213,102 +213,121 @@
     <script src="./User/js/main.js?v=3.4"></script>
     <script>
         let timer = 60;
-        function startTimer(){
-            timerInterval = setInterval(()=>{
+        let timerInterval; // Define globally
+        
+    
+        function startTimer() {
+            timerInterval = setInterval(() => {
                 timer--;
                 document.getElementById("timerVal").textContent = timer;
-                if(timer <= 0){
+                if (timer <= 0) {
                     clearInterval(timerInterval);
                     document.getElementById("timerVal").classList.add('expired');
                     document.getElementById("timerVal").textContent = "Expired";
                     document.querySelector('input[name="otp"]').disabled = true;
                 }
-            },1000)
+            }, 1000);
         }
-
-
+    
         startTimer();
-
+    
         function validateOTPForm() {
-    const otpInput = document.getElementById('otp').value;
+            const otpInput = document.getElementById('otp').value;
+    
+            $.ajax({
+                type: "POST",
+                url: "/verify-otp",
+                data: { otp: otpInput },
+                success: function (response) {
+                    // Check for success response
+                    if (response.success) {
+                        Swal.fire({
+                            title: response.title || "Success!",
+                            icon: "success",
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500,
+                        }).then((result) => {
+                            if (result.isConfirmed || result.dismiss) {
+                                window.location.href = response.redirectUrl || '/'; // Redirect with fallback
+                            }
+                        });
+                    }else{// Handle session expired
+                        Swal.fire({
+                            icon: "error",
+                            title: response.title,
+                            text: response.message,
+                            confirmButtonText: 'OK'
+                            }).then(() => {
+                                if(response.title ==='Sessionn Expired')
+                                window.location.href = "/signup"; // Redirect to signup page
+                            });
+                    } 
+                    
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: "error",
+                        title: 'Request Failed',
+                        text: "An error occured. Please try",
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+    
+            return false; // Prevent form submission
+        }
+    
+        function resendOtp() {
+            clearInterval(timerInterval);
+            timer = 60;
+            document.getElementById('otp').disabled = false;
+            document.getElementById("timerVal").classList.remove("expired");
+            startTimer();
+    
+            $.ajax({
+                type: "POST",
+                url: "/resend-otp",
+                success: function (response) {
 
-    $.ajax({
-        type: "POST",
-        url: "/verify-otp",
-        data: { otp: otpInput },
-        success: function (response) {
-            if (response.success) {
-                Swal.fire({
-                    title: "Success!",
-                    icon: "success",
-                    text: "Your OTP has been verified successfully",
-                    showConfirmButton: false,
-                    timer: 1500,
-                }).then((result) => {
-                    if (result.isConfirmed || result.dismiss) {
-                        window.location.href = response.redirectUrl;
+                    if (response.success) {
+                        Swal.fire({
+                            icon: "success",
+                            title:response.title,
+                            text: response.message ,
+                            showConfirmButton: false,
+                            timer: 1500
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: response.title,
+                            text: response.message
+                        }).then(()=>{
+                            if(response.title ==='Session Expired'){
+                                window.location.href = response.redirectUrl // Redirect to signup page
+
+                            }
+
+                        });
                     }
-                });
-            } else {
-                Swal.fire({
-                    icon: "error",
-                    title: 'Error',
-                    text: response.message,
-                });
-            }
-        },
-        error: function () {
-            Swal.fire({
-                icon: "error",
-                title: 'Invalid OTP',
-                text: "Please try again.",
-                confirmButtonText: 'OK'
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: "Error",
+                        text: "An error occurred while resending OTP. Please try again.",
+                        confirmButtonText: 'OK'
+
+                    });
+                }
             });
+            
+            return false; // Prevent default button behavior
         }
-    });
-
-    return false; // Prevent form submission
-}
-
-function resendOtp(){
-    clearInterval(timerInterval);
-    timer=60;
-    document.getElementById('otp').disabled=false;
-    document.getElementById("timerVal").classList.remove("expired");
-    startTimer();
-    $.ajax({
-        type:"POST",
-        url:"/resend-otp",
-        success:function(response){
-            if(response.success){
-                Swal.fire({
-                    icon:"success",
-                    title:"OTP resend successfully",
-                    showConfirmButton:false,
-                    timer:1500
-                });
-            }else{
-                Swal.fire({
-                    icon:'error',
-                    title:"Error",
-                    text:"An error occured while resending OTP, Please try again",
-
-
-                })
-            }
-        },
-        error: function() {
-            Swal.fire({
-                icon: 'error',
-                title: "Error",
-                text: "An error occurred while resending OTP. Please try again.",
-            });
-        }
-    });
-    return false;
-}
-
     </script>
+    
+
 </body>
 
 </html>

@@ -6,11 +6,16 @@ const categorySchema = new mongoose.Schema({
         required:true,
         unique:true
     },
+    parentCategory:{
+        type:String,
+        required:true,
+        unique:true
+    },
     description:{
         type:String,
         required:true
     },
-    isListed:{
+    status:{
         type:Boolean,
         default:true
     },
@@ -18,6 +23,7 @@ const categorySchema = new mongoose.Schema({
         type:Number,
         default:0
     },
+
 
     
 },{timestamps:true});

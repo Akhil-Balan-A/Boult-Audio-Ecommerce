@@ -1,0 +1,164 @@
+
+<%-include("../../views/partials/admin/sidebar")-%>
+
+<%-include("../../views/partials/admin/header")-%>
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Customer list</h2>
+        <!-- <div>
+            <a href="#" class="btn btn-primary"><i class="material-icons md-plus"></i> Create new</a>
+        </div> -->
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 col-md-6 me-auto">
+                    <!-- Search Field -->
+                    <form id="searchForm" action="" method="get">
+                        <input type="hidden" name="page" value="1">
+                        <input type="hidden" name="limit" value="<%= limit %>">
+                        <input type="text" id="searchInput" name="search" placeholder="Search by name, email, or phone..." class="form-control" value="<%= search %>">
+                    </form>
+                </div>
+                
+                
+                <div class="col-lg-2 col-md-3 col-6">
+                    <!-- Status Filter Dropdown -->
+                    <select class="form-select" onchange="filterByStatus(this.value)">
+                        <option value="">Status</option>
+                        <option value="blocked" <%= status === 'blocked' ? 'selected' : '' %>>Blocked</option>
+                        <option value="unblocked" <%= status === 'unblocked' ? 'selected' : '' %>>Unblocked</option>
+                        <option value="all" <%= status === 'all' ? 'selected' : '' %>>Show all</option>
+                    </select>
+                </div>
+                
+                <div class="col-lg-2 col-md-3 col-6">
+                    <!-- Customers Per Page Dropdown -->
+                    <select class="form-select" id="limitSelect" name="limit" onchange="changeLimit(this.value)">
+                        <option value="3" <%= limit === 3 ? 'selected' : '' %>>Show 3</option>
+                        <option value="10" <%= limit === 10 ? 'selected' : '' %>>Show 10</option>
+                        <option value="30" <%= limit === 30 ? 'selected' : '' %>>Show 30</option>
+                    </select>
+                </div>
+            </div>
+            
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover table-striped ">
+                    <thead class="bg-secondary" style="font-weight: bold;">
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Registered</th>
+                            <th> Action </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Check if data array is empty -->
+                        <% if (data.length === 0) { %>
+                            <tr>
+                                <td colspan="5" class="text-center">No customers found matching the search or filter criteria.</td>
+                            </tr>
+                        <% } else { %>
+                            <% for (let i = 0; i < data.length; i++) { %>
+                                <tr>
+                                    <td><%= data[i].name %></td>
+                                    <td><%= data[i].email %></td>
+                                    <td><%= data[i].phone || 'N/A' %></td>
+                                    <td><%= new Date(data[i].createdAt).toLocaleDateString() %></td>
+                                    <td>
+                                        <% if (data[i].isBlocked === false) { %>
+                                            <form action="/admin/blockCustomer/<%= data[i]._id %>?_method=PUT&page=<%= currentPage %>" method="POST" style="display:inline;">
+                                                <button class="btn btn-sm btn-danger rounded font-sm mt-15" style="width:90px">Block</button>
+                                            </form>
+                                        <% } else { %>
+                                            <form action="/admin/unblockCustomer/<%= data[i]._id %>?_method=PUT&page=<%= currentPage %>" method="POST" style="display:inline;">
+                                                <button class="btn btn-sm btn-brand rounded font-sm mt-15" style="width:90px">Unblock</button>
+                                            </form>
+                                        <% } %>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+            
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+    <div class="pagination-area mt-15 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+                <!-- Previous Button -->
+                <% if (currentPage > 1) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>&limit=<%= limit %>" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&laquo;</span>
+                    </li>
+                <% } %>
+    
+                <!-- Page Numbers -->
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>&search=<%= search %>&limit=<%= limit %>"><%= i %></a>
+                    </li>
+                <% } %>
+    
+                <!-- Next Button -->
+                <% if (currentPage < totalPages) { %>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>&limit=<%= limit %>" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                <% } else { %>
+                    <li class="page-item disabled">
+                        <span class="page-link" aria-hidden="true">&raquo;</span>
+                    </li>
+                <% } %>
+            </ul>
+        </nav>
+    </div>
+    
+    
+</section>
+<script>
+    // Handle customers per page limit change
+    function changeLimit(limit) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('limit', limit);
+        params.set('page', 1); // Reset to the first page when limit changes
+        window.location.search = params.toString();
+    }
+
+    // Handle filtering by status
+    function filterByStatus(status) {
+        const params = new URLSearchParams(window.location.search);
+        params.set('status', status);
+        params.set('page', 1); // Reset to the first page when status changes
+        window.location.search = params.toString();
+    }
+</script>
+<script>
+    // Get the search input and the form element
+    const searchInput = document.getElementById('searchInput');
+    const searchForm = document.getElementById('searchForm');
+
+    // Listen for keyup events on the search input
+    searchInput.addEventListener('keyup', function() {
+        // If the search input is empty, reset the page by submitting the form without search query
+        if (searchInput.value.trim() === '') {
+            searchForm.submit(); // Submits the form with an empty search value, essentially clearing the search
+        }
+    });
+</script>
+
+<%-include("../../views/partials/admin/footer")-%>

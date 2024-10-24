@@ -494,6 +494,13 @@
                                         <p class="mb-50 font-sm">
                                             Adventure starts here 🚀
                                         </p>
+                                        <% if (error.length > 0) { %>
+                                            <div class="alert alert-danger">
+                                                <% error.forEach(function(message) { %>
+                                                    <p><%= message %></p>
+                                                <% }); %>
+                                            </div>
+                                        <% } %>
                                         <% if (typeof message !=='undefined' ) { %>
                                             <% if(color==='danger' ) { %>
                                                 <div class="alert alert-danger text-center" role="alert">
@@ -508,44 +515,44 @@
                                                             <form id="signForm" method="post" action="/signup">
                                                                 <div class="form-group">
                                                                     <input type="text" name="name"
-                                                                        placeholder="Full Name" id="name">
+                                                                        placeholder="Full Name" id="name" >
                                                                     <div class="error-message" id="error1"></div>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <input type="email" name="email"
-                                                                        placeholder="Email Address" id="email">
+                                                                        placeholder="Email Address" id="email" >
                                                                     <div class="error-message" id="error2"></div>
                                                                 </div>
                                                                 <div class="form-group">
                                                                     <input type="tel" name="phone"
                                                                         placeholder="Phone Number" id="phone"
-                                                                        maxlength="10">
-                                                                    <div class="error-message" id="error3"></div>
+                                                                        maxlength="10" >
+                                                                    <div class="error-message" id="error3" ></div>
                                                                 </div>
                                                                 <div class="form-group password-wrapper">
                                                                     <input required="" type="password" name="password"
-                                                                        placeholder="Password" id="password">
+                                                                        placeholder="Password" id="password" >
                                                                     <i class="toggle-password"
                                                                         id="togglePassword">&#128065;</i>
                                                                     <!-- Eye icon -->
-                                                                    <div class="error-message" id="error4"></div>
                                                                 </div>
+                                                                <div class="error-message" id="error4"></div>
                                                                 <div class="form-group password-wrapper">
-                                                                    <input required="" type="password"
+                                                                    <input type="password"
                                                                         name="confirm_password"
                                                                         placeholder="Confirm Password"
-                                                                        id="confirm_password">
+                                                                        id="confirmPassword">
                                                                     <i class="toggle-password"
                                                                         id="toggleConfirmPassword">&#128065;</i>
                                                                     <!-- Eye icon -->
-                                                                    <div class="error-message" id="error5"></div>
                                                                 </div>
+                                                                <div class="error-message" id="error5"></div>
                                                                 <div class="login_footer form-group">
                                                                     <div class="chek-form">
                                                                         <div class="custome-checkbox">
                                                                             <input class="form-check-input"
                                                                                 type="checkbox" name="termsAccepted"
-                                                                                id="terms" value="true">
+                                                                                id="terms" value="true" >
                                                                             <label class="form-check-label"
                                                                                 for="terms"><span>I agree to terms &amp;
                                                                                     Policy.</span></label>
@@ -561,16 +568,20 @@
                                                                 <div class="form-group text-center">
                                                                     <button type="submit"
                                                                         class="btn btn-fill-out btn-block hover-up"
-                                                                        name="signup">Submit &amp; Register</button>
+                                                                        style="font-weight: bold" name="signup">Submit
+                                                                        &amp; Register</button>
                                                                 </div>
                                                                 <div class="form-group text-center">
-                                                                    <a href="/auth/google" class="btn btn-fill-out btn-block hover-up" role="button">
-                                                                        <img src="https://i.ibb.co/x5Hb7YC/google.png" alt="Google Logo"
+                                                                    <a href="/auth/google"
+                                                                        class="btn btn-fill-out btn-block hover-up"
+                                                                        role="button">
+                                                                        <img src="https://i.ibb.co/x5Hb7YC/google.png"
+                                                                            alt="Google Logo"
                                                                             style="width: 20px; height: 20px; margin-right: 8px; vertical-align: middle;">
                                                                         Sign Up with Google
                                                                     </a>
                                                                 </div>
-                                                                
+
 
                                                             </form>
                                                             <div class="divider-text-center mt-15 mb-15">
@@ -578,7 +589,8 @@
                                                             </div>
 
                                                             <div class="text-muted text-center">Already have an account?
-                                                                <a href="/login">Sign in now</a></div>
+                                                                <a href="/login">Sign in now</a>
+                                                            </div>
                                     </div>
                                 </div>
                             </div>
@@ -747,7 +759,7 @@
             const email = document.getElementById('email');
             const phone = document.getElementById('phone');
             const password = document.getElementById('password');
-            const confirmPassword = document.getElementById('confirm_password');
+            const confirmPassword = document.getElementById('confirmPassword');
             const termsCheckbox = document.getElementById('terms');
             const error1 = document.getElementById('error1');
             const error2 = document.getElementById('error2');
@@ -756,134 +768,144 @@
             const error5 = document.getElementById('error5');
             const termsError = document.getElementById('termsError');
             const signForm = document.getElementById('signForm');
-
-
+    
             function checkNameValidation() {
                 const nameVal = name.value;
-                const namePattern = /^[A-Za-z\s]+$/; // Fixed pattern to include space
+                const namePattern = /^[A-Za-z\s]+$/; // Name can only contain alphabets and spaces
                 if (nameVal.trim() === "") {
                     error1.style.display = 'block';
                     error1.innerHTML = "Please enter a valid name";
+                    return false;
                 } else if (!namePattern.test(nameVal)) {
                     error1.style.display = 'block';
                     error1.innerHTML = "Name can only contain alphabets and spaces";
+                    return false;
                 } else {
                     error1.style.display = 'none';
                     error1.innerHTML = "";
+                    return true;
                 }
             }
-
+    
             function checkEmailValidation() {
                 const emailVal = email.value;
                 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
                 if (!emailPattern.test(emailVal)) {
                     error2.style.display = 'block';
-                    error2.innerHTML = "Invalid format";
+                    error2.innerHTML = "Invalid email format";
+                    return false;
                 } else {
                     error2.style.display = 'none';
                     error2.innerHTML = "";
+                    return true;
                 }
             }
-
+    
             function checkPhoneValidation() {
-                const phoneVal = phone.value;
-                const phoneRegex = /^\d+$/;
-                if (phoneVal.trim() === "") {
-                    error3.style.display = 'block';
-                    error3.innerHTML = "Enter valid phone number";
-                } else if (phoneVal.length !== 10) { // Changed to strictly 10 characters
-                    error3.style.display = 'block';
-                    error3.innerHTML = "Phone number must be exactly 10 characters";
-                } else if (!phoneRegex.test(phoneVal)) {
-                    console.log(typeof phoneVal)
-                    error3.style.display = 'block';
-                    error3.innerHTML = "Phone number must not include alphabets or special characters";
-                } else {
-                    error3.style.display = 'none';
-                    error3.innerHTML = "";
-                }
-            }
+            const phoneVal = phone.value;
+            const phoneRegex = /^\d+$/;
+            if (phoneVal.trim() === "") {
+                error3.style.display = 'block';
+                error3.innerHTML = "Enter a valid phone number";
+                return false;
+            } else if(phoneVal.length !==10){
+                error3.style.display = 'block';
+                error.innerHTML = 'Phone number must be exactly 10 digits'
 
+            }else if (!phoneRegex.test(phoneVal)) {
+                error3.style.display = 'block';
+                error3.innerHTML = "Phone number should contain only numbers";
+                return false;
+            } else {
+                error3.style.display = 'none';
+                error3.innerHTML = "";
+                return true;
+            }
+        }
+    
             function checkPasswordValidation() {
                 const passwordVal = password.value;
-                const confirm_passwordVal = confirmPassword.value;
                 const alphabet = /[a-zA-Z]/;
                 const digit = /\d/;
+                const specialChar = /[@$!%*?&]/;
                 if (passwordVal.length < 8) {
                     error4.style.display = 'block';
                     error4.innerHTML = "Password should contain at least 8 characters";
+                    return false;
                 } else if (!alphabet.test(passwordVal) || !digit.test(passwordVal)) {
                     error4.style.display = 'block';
                     error4.innerHTML = "Password should contain both numbers and alphabets";
+                    return false;
+                } else if (!specialChar.test(passwordVal)) {
+                    error4.style.display = 'block';
+                    error4.innerHTML = 'Password must contain at least one special character (@$!%*?&)';
+                    return false;
                 } else {
                     error4.style.display = 'none';
                     error4.innerHTML = "";
+                    return true;
                 }
-                if (passwordVal !== confirm_passwordVal) {
+            }
+    
+            function checkConfirmPasswordValidation() {
+                const confirmPasswordVal = confirmPassword.value;
+                const passwordVal = password.value;
+                if (passwordVal !== confirmPasswordVal) {
                     error5.style.display = 'block';
                     error5.innerHTML = "Passwords do not match";
+                    return false;
                 } else {
                     error5.style.display = 'none';
                     error5.innerHTML = "";
+                    return true;
                 }
             }
-
+    
             function checkTermsValidation() {
                 if (!termsCheckbox.checked) {
                     termsError.style.display = 'block';
                     termsError.innerHTML = "You must agree to the terms and conditions!";
+                    return false;
                 } else {
                     termsError.style.display = 'none';
                     termsError.innerHTML = "";
+                    return true;
                 }
             }
-
-
-
+    
             signForm.addEventListener("submit", (e) => {
-                checkNameValidation();
-                checkEmailValidation();
-                checkPhoneValidation();
-                checkPasswordValidation();
-                checkTermsValidation();
-
+                const isNameValid = checkNameValidation();
+                const isEmailValid = checkEmailValidation();
+                const isPhoneValid = checkPhoneValidation();
+                const isPasswordValid = checkPasswordValidation();
+                const isConfirmPasswordValid = checkConfirmPasswordValidation();
+                const isTermsValid = checkTermsValidation();
+    
                 // Prevent form submission if any errors are present
-                if (error1.innerHTML ||
-                    error2.innerHTML ||
-                    error3.innerHTML ||
-                    error4.innerHTML ||
-                    error5.innerHTML ||
-                    termsError.innerHTML) {
-                    e.preventDefault();
+                if (!isNameValid || !isEmailValid || !isPhoneValid || !isPasswordValid || !isConfirmPasswordValid || !isTermsValid) {
+                    e.preventDefault(); // Prevent form submission
                 }
             });
         });
-
+    
         document.addEventListener('DOMContentLoaded', () => {
-            const togglePassword = document.getElementById('togglePassword');
             const password = document.getElementById('password');
-
+            const togglePassword = document.getElementById('togglePassword');
+    
+            const confirmPassword = document.getElementById('confirmPassword');
             const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
-            const confirmPassword = document.getElementById('confirm_password');
-
+    
             togglePassword.addEventListener('click', () => {
                 const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
                 password.setAttribute('type', type);
                 togglePassword.innerHTML = type === 'password' ? '&#128065;' : '&#128586;';
             });
-
+    
             toggleConfirmPassword.addEventListener('click', () => {
                 const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
                 confirmPassword.setAttribute('type', type);
                 toggleConfirmPassword.innerHTML = type === 'password' ? '&#128065;' : '&#128586;';
             });
         });
-
-
-
-
     </script>
-
-</body>
-
-</html>
+    
