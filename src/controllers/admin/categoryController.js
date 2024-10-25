@@ -1,31 +1,67 @@
 const Category = require('../../models/categorySchema');
 
-const categoryInfo = async(req,res)=>{
+const loadCategoryPage = async (req, res) => {
     try {
-        const page = parseInt(req.query.page)||1;
-        const limit = 4;
-        const skip = (page-1)*limit;
+        // Get the search query for category name, parentCategory, status
+        const search = req.query.search || '';
+        
+        // Set pagination and limit
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 4;
+        const skip = (page - 1) * limit;
 
-        const categoryData = await Category.find({})
-        .sort({createdAt:-1})
-        .skip(skip)
-        .limit(limit);
+        // Define the filter object
+        const filter = {};
 
-        const totalCategories = await Category.countDocuments();
-        const totalPages = Math.ceil(totalCategories/limit);
-        res.render('admin/category',{
-            cat:categoryData,
-            currentPage:page,
+        // Add search filters for name and parentCategory
+        if (search) {
+            filter.$or = [
+                { name: { $regex: ".*" + search + ".*", $options: 'i' } }, // Case-insensitive search for name
+                { description: { $regex: ".*" + search + ".*", $options: 'i' } } // Case-insensitive search for description
+            ];
+            
+            // Add parentCategory filter if search matches any parent category
+            const categories = ['men', 'women', 'kids'];
+            if (categories.includes(search.toLowerCase())) {
+                filter.parentCategory = search.toLowerCase();
+            }
+
+            // Handle status search as boolean
+            if (search.toLowerCase() === 'blocked') {
+                filter.status = false; // Show blocked categories
+            } else if (search.toLowerCase() === 'unblocked') {
+                filter.status = true; // Show unblocked categories
+            }
+        }
+
+        // Fetch categories based on the filter
+        const categoryData = await Category.find(filter)
+            .populate('productList')//Populate product list to show products in each category
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .skip(skip)
+            .exec();
+
+        // Get the total category count for pagination
+        const totalCategories = await Category.countDocuments(filter);
+        const totalPages = Math.ceil(totalCategories / limit);
+
+        // Render the page with data and pagination information
+        res.render('admin/category', {
+            data: categoryData,
+            currentPage: page,
             totalPages: totalPages,
-            totalCategoreis:totalCategories
-        })
+            totalCategories: totalCategories,
+            search,
+            limit
+        });
 
     } catch (error) {
         console.log(error);
         res.redirect('/errorPage');
-        
     }
-}
+};
+
 
 const addCategory = async(req,res)=>{
     try {
@@ -52,7 +88,7 @@ const addCategory = async(req,res)=>{
             name,
             description,
             parentCategory,
-            status:status==='true'
+            status:true
 
         });
 
@@ -71,7 +107,7 @@ const addCategory = async(req,res)=>{
 }
 
 module.exports={
-    categoryInfo,
+    loadCategoryPage,
     addCategory
     
 }

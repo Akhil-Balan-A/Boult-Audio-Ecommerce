@@ -3,6 +3,7 @@ const adminRoute = express.Router();
 const adminController = require('../controllers/admin/adminController');
 const customerController = require('../controllers/admin/customerController');
 const categoryController = require('../controllers/admin/categoryController');
+const productController = require('../controllers/admin/productController')
 const adminAuth = require('../middleware/adminAuth');
 //Error management
 adminRoute.get('/errorPage',adminController.errorPage);
@@ -18,8 +19,12 @@ adminRoute.put('/unblockCustomer/:id',adminAuth.isLogin,customerController.unblo
 //Sample page load
 adminRoute.get('/sampleLoad',adminController.sampleLoad);
 //Category Manamgement
-adminRoute.get('/category',adminAuth.isLogin,categoryController.categoryInfo);
+adminRoute.get('/category',adminAuth.isLogin,categoryController.loadCategoryPage);
 adminRoute.post('/addCategory',adminAuth.isLogin,categoryController.addCategory);
+
+//Product Management
+adminRoute.get('/products',adminAuth.isLogin,productController.loadAllProducts);
+adminRoute.get('/addProduct',adminAuth.isLogin,productController.loadAddProductPage);
 
 
 

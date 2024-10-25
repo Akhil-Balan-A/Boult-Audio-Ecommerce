@@ -1,0 +1,96 @@
+<%-include("../../views/partials/admin/sidebar")-%>
+
+<%-include("../../views/partials/admin/header")-%>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+
+<section class="content-main">
+    <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()"> <!-- Call validateImages on submit -->
+        <div class="row">
+            <div class="col-9">
+                <div class="content-header">
+                    <h2 class="content-title">Add New Product</h2>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <!--Product Name-->
+                        <div class="mb-4">
+                            <label for="name" class="form-label">Product Name</label>
+                            <input type="text" name="name" id="name" class="form-control" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="category" class="form-label">Category</label>
+                            <select name="category" id="category" class="form-select" required>
+                                <option value="" disabled selected>Select Category</option> <!-- Default select message -->
+                                <% data.forEach(data => { %>
+                                    <option value="<%= data._id %>"><%= data.name %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="productColors" class="form-label">Product Colors</label>
+                            <input type="text" name="productColors" id="productColors" class="form-control" placeholder="Enter colors separated by commas (e.g., Red, Blue, Green)" required>
+                        </div>
+                    </div>
+                </div> <!-- card end// -->
+                <!-- Description -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div>
+                            <label for="description" class="form-label">Description</label>
+                            <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
+                        </div>
+                    </div>
+                </div> <!-- card end// -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <label for="productImages" class="form-label">Product Images</label>
+                        <input type="file" name="productImages" id="productImages" class="form-control" accept="image/*" multiple onchange="previewImage(event)" required> <!-- Enable multiple file selection -->
+                        <small class="text-muted">Choose images one by one to add, minimum 3 images required</small>
+                        <div id="imagePreview" class="mt-2"></div>
+                    </div>
+                </div> <!-- card end// -->
+            </div>
+            <div class="col-lg-3">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <label for="stock" class="form-label">Stock Quantity</label>
+                            <input type="number" name="stock" id="stock" class="form-control" min="0" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="regularPrice" class="form-label">Regular Price</label>
+                            <input type="number" name="regularPrice" id="regularPrice" class="form-control" min="0" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="salePrice" class="form-label">Sale Price</label>
+                            <input type="number" name="salePrice" id="salePrice" class="form-control" min="0" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="productOffer" class="form-label">Product Offer (%)</label>
+                            <input type="number" name="productOffer" id="productOffer" class="form-control" min="0" max="100" value="0">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Product Status</label>
+                            <select name="status" class="form-select" required>
+                                <option value="" disabled selected>Select Status</option> <!-- Default select message -->
+                                <option value="Available">Available</option>
+                                <option value="out of stock">Out of Stock</option>
+                                <option value="Discontinued">Discontinued</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary">Add Product</button>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- card end// -->
+            </div>
+        </div>
+    </form>    
+</section>  
+<script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+<%-include("../../views/partials/admin/footer")-%>

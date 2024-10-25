@@ -1,7 +1,6 @@
+<%- include("../../views/partials/admin/sidebar") %>
+<%- include("../../views/partials/admin/header") %>
 
-<%-include("../../views/partials/admin/sidebar")-%>
-
-<%-include("../../views/partials/admin/header")-%>
 <style>
     .form-label {
         font-size: 1.1rem;
@@ -27,7 +26,6 @@
         position: relative;
     }
 
-
     .form-check-input:checked::before {
         content: '';
         width: 0.6rem;
@@ -43,219 +41,266 @@
     .form-check-label {
         margin-left: 0.8rem;
     }
-
 </style>
+
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title">Categories </h2>
+            <h2 class="content-title card-title">Categories</h2>
             <p>Add, edit or delete a category</p>
         </div>
-        <div>
-            <input type="text" placeholder="Search Categories" class="form-control bg-white">
-        </div>
     </div>
-    <div class="card">
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-3">
-                    <form class="p-4 shadow-sm rounded bg-white" method="post" action="/admin/addCategory" id="formSubmission">
-                        <!-- Category Name -->
-                        <div class="mb-4">
-                            <label for="categoryName" class="form-label fw-bold">Category Name</label>
-                            <input type="text" placeholder="Type here" name="name" class="form-control border-radius-lg" id="categoryName" required>
-                            <div class="error-message" id="name-error" style="color: red; display: none;"></div>
-                        </div>
-                    
-                        <!-- Sub Category (Custom Styled Select) -->
-                        <div class="mb-4">
-                            <label for="parentCategory" class="form-label fw-bold">Parent Category</label>
-                            <div class="custom-select-wrapper">
-                                <select id="parentCategory" name="parentCategory" class="form-select border-radius-lg">
-                                    <option value="">Select</option>
-                                    <option value="men">Men</option>
-                                    <option value="women">Women</option>
-                                    <option value="children">Children</option>
-                                </select>
+
+    <header class="card-header">
+        <div class="row gx-3">
+            <div class="col-lg-4 col-md-6 me-auto">
+                <!-- Search Field -->
+                <form id="searchForm" action="" method="get">
+                    <input type="hidden" name="page" value="1">
+                    <input type="hidden" name="limit" value="<%= limit %>">
+                    <input type="text" name="search" placeholder="Search by name, description, or status..." class="form-control" value="<%= search %>">
+                </form>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-6">
+                <!-- Status Filter Dropdown -->
+                <select class="form-select" onchange="filterByStatus(this.value)">
+                    <option value="">Status</option>
+                    <option value="blocked" <%= search === 'blocked' ? 'selected' : '' %>>Blocked</option>
+                    <option value="unblocked" <%= search === 'unblocked' ? 'selected' : '' %>>Unblocked</option>
+                </select>
+            </div>
+
+            <div class="col-lg-2 col-md-3 col-6">
+                <!-- Items Per Page Dropdown -->
+                <select class="form-select" id="limitSelect" name="limit" onchange="changeLimit(this.value)">
+                    <option value="4" <%= limit == 4 ? 'selected' : '' %>>Show 4</option>
+                    <option value="10" <%= limit == 10 ? 'selected' : '' %>>Show 10</option>
+                    <option value="20" <%= limit == 20 ? 'selected' : '' %>>Show 20</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <form class="p-4 shadow-sm rounded bg-white" method="post" action="/admin/addCategory" id="formSubmission">
+                            <!-- Category Name -->
+                            <div class="mb-4">
+                                <label for="categoryName" class="form-label fw-bold">Category Name</label>
+                                <input type="text" placeholder="Type here" name="name" class="form-control border-radius-lg" id="categoryName" required>
+                                <div class="error-message" id="name-error" style="color: red; display: none;"></div>
                             </div>
-                            <div class="error-message" id="parentCategory-error" style="color: red; display: none;"></div>
 
-                        </div>
-                    
-                        <!-- Status (Radio Buttons) -->
-                        <div class="mb-4">
-                            <label for="status" class="form-label fw-bold">Status</label>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" id="active" value="active" checked>
-                                <label class="form-check-label" for="active">Active</label>
+                            <!-- Sub Category (Custom Styled Select) -->
+                            <div class="mb-4">
+                                <label for="parentCategory" class="form-label fw-bold">Parent Category</label>
+                                <div class="custom-select-wrapper">
+                                    <select id="parentCategory" name="parentCategory" class="form-select border-radius-lg">
+                                        <option value="">Select</option>
+                                        <option value="men">Men</option>
+                                        <option value="women">Women</option>
+                                        <option value="kids">Kids</option>
+                                    </select>
+                                </div>
+                                <div class="error-message" id="parentCategory-error" style="color: red; display: none;"></div>
                             </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="status" id="inactive" value="inactive">
-                                <label class="form-check-label" for="inactive">Inactive</label>
+
+                            <!-- Status (Radio Buttons) -->
+                            <div class="mb-4">
+                                <label for="status" class="form-label fw-bold">Status</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="active" value="active" checked>
+                                    <label class="form-check-label" for="active">Active</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="inactive" value="inactive">
+                                    <label class="form-check-label" for="inactive">Inactive</label>
+                                </div>
+                                <div class="error-message" id="status-error" style="color: red; display: none;"></div>
                             </div>
-                            <div class="error-message" id="status-error" style="color: red; display: none;"></div>
 
-                        </div>
-                    
-                        <!-- Category Description -->
-                        <div class="mb-4">
-                            <label for="categoryDescription" class="form-label fw-bold">Category Description</label>
-                            <textarea placeholder="Type here" class="form-control border-radius-lg" name="description" id="categoryDescription"></textarea>
-                            <div class="error-message" id="description-error" style="color: red;display: none;" ></div>
+                            <!-- Category Description -->
+                            <div class="mb-4">
+                                <label for="categoryDescription" class="form-label fw-bold">Category Description</label>
+                                <textarea placeholder="Type here" class="form-control border-radius-lg" name="description" id="categoryDescription"></textarea>
+                                <div class="error-message" id="description-error" style="color: red; display: none;"></div>
+                            </div>
 
-                        </div>
-                    
-                        <!-- Submit Button -->
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg border-radius-lg">Create Category</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-9">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="text-center"> <!--if this for check all the belw items form also need to be checked-->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="">
-                                        </div>
-                                    </th>
-                                    <th>SL.NO</th>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Parent Category</th>
-                                    <th>Status</th>
-                                    <th class="text-end">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (cat.length === 0) { %>
-                                    <tr>
-                                        <td colspan="7" class="text-center">No categories available</td>
-                                    </tr>
-                                <% } else { %>
-                                <%cat.reverse().forEach((category,index)=>{%>
-
-                                <tr>
-                                    <td class="text-center">
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" value="">
-                                        </div>
-                                    </td>
-                                    <td><%= (currentPage - 1) * 4 + (index + 1) %></td>
-                                    <td><b><%=category.name%></b></td>
-                                    <td><%=category.description%></td>
-                                    <td><%=category.parentCategory%></td>
-                                    <td><%=category.status%></td>
-                                    <td class="text-end">
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <%})%>
-                                <% } %>
-
-                            </tbody>
-                        </table>
-                        <div class="pagination-area mt-15 mb-50">
-                            
-                            <nav aria-label="Page navigation example">
-                                <ul class="pagination justify-content-start">
-                                    <% if (currentPage > 1) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage - 1 %>"><i class="material-icons md-chevron_left"></i></a>
-                                        </li>
-                                    <% } %>
-                        
-                                    <% for (let i = 1; i <= totalPages; i++) { %>
-                                        <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
-                                            <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                                        </li>
-                                    <% } %>
-                        
-                                    <% if (currentPage < totalPages) { %>
-                                        <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage + 1 %>"><i class="material-icons md-chevron_right"></i></a>
-                                        </li>
-                                    <% } %>
-                                </ul>
-                            </nav>
-                        </div>
-                        
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg border-radius-lg">Create Category</button>
+                            </div>
+                        </form>
                     </div>
-                </div> <!-- .col// -->
-            </div> <!-- .row // -->
-        </div> <!-- card body .// -->
-    </div> <!-- card .// -->
-</section>
 
+                    <div class="col-md-9">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>SL.NO</th>
+                                        <th>Name</th>
+                                        <th>Description</th>
+                                        <th>Parent Category</th>
+                                        <th>Status</th>
+                                        <th>Product List</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (data.length === 0) { %>
+                                        <tr>
+                                            <td colspan="7" class="text-center">No categories available</td>
+                                        </tr>
+                                    <% } else { %>
+                                        <% data.reverse().forEach((category, index) => { %>
+                                            <tr>
+                                                
+                                                <td><%= (currentPage - 1) * limit + (index + 1) %></td>
+                                                <td><b><%= category.name %></b></td>
+                                                <td><%= category.description %></td>
+                                                <td><%= category.parentCategory %></td>
+                                                <td><%= category.status ? 'Active' : 'Inactive' %></td> <!-- Display Active/Inactive -->
+                                                <td class="text-end">
+                                                    <div class="dropdown">
+                                                        <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm">
+                                                            <i class="material-icons md-more_horiz"></i>
+                                                        </a>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="#">View detail</a>
+                                                            <a class="dropdown-item" href="#">Edit info</a>
+                                                            <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    <% } %>
+                                </tbody>
+                            </table>
+
+                            <!-- Pagination Controls -->
+                            <div class="pagination-area mt-15 mb-50">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination justify-content-start">
+                                        <% if (currentPage > 1) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage - 1 %>&search=<%= search %>&limit=<%= limit %>" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                        <% } else { %>
+                                            <li class="page-item disabled">
+                                                <span class="page-link" aria-hidden="true">&laquo;</span>
+                                            </li>
+                                        <% } %>
+
+                                        <% for (let i = 1; i <= totalPages; i++) { %>
+                                            <li class="page-item <%= (i === currentPage) ? 'active' : '' %>">
+                                                <a class="page-link" href="?page=<%= i %>&search=<%= search %>&limit=<%= limit %>"><%= i %></a>
+                                            </li>
+                                        <% } %>
+
+                                        <% if (currentPage < totalPages) { %>
+                                            <li class="page-item">
+                                                <a class="page-link" href="?page=<%= currentPage + 1 %>&search=<%= search %>&limit=<%= limit %>" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        <% } else { %>
+                                            <li class="page-item disabled">
+                                                <span class="page-link" aria-hidden="true">&raquo;</span>
+                                            </li>
+                                        <% } %>
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</section>
 <%-include("../../views/partials/admin/footer")-%>
 
 <script>
+    function filterByStatus(status) {
+        document.getElementById('searchForm').submit();
+    }
+
+    function changeLimit(limit) {
+        document.getElementById('searchForm').submit();
+    }
+</script>
+
+
+
+
+
+
+
+
+<script>
     // Function to handle form submission
-    function handleFormSubmission(event) {
-        event.preventDefault(); // prevent the form from submitting
-        console.log('Form submission prevented');
-        if (validateForm()) {
-        submitForm();
-        } else {
-        console.log('Form validation failed');
-        }
-    }
+    // function handleFormSubmission(event) {
+    //     event.preventDefault(); // prevent the form from submitting
+    //     console.log('Form submission prevented');
+    //     if (validateForm()) {
+    //     submitForm();
+    //     } else {
+    //     console.log('Form validation failed');
+    //     }
+    // }
 
-    function validateForm() {
-        clearErrorMessages();
-        const name = document.getElementsByName('categoryName')[0].value.trim();
-        const description = document.getElementById('categoryDescription').value.trim();
-        const parentCategory = document.getElementById('parentCategory').value.trim();
-        const status = document.querySelector('input[name="status"]:checked').value;
-        let isValid = true;
+    // function validateForm() {
+    //     clearErrorMessages();
+    //     const name = document.getElementsByName('categoryName')[0].value.trim();
+    //     const description = document.getElementById('categoryDescription').value.trim();
+    //     const parentCategory = document.getElementById('parentCategory').value.trim();
+    //     const status = document.querySelector('input[name="status"]:checked').value;
+    //     let isValid = true;
 
-        if (name === "") {
-            displayErrorMessage('name-error', 'Please enter a name');
-            isValid = false;
-        } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-            displayErrorMessage('name-error', 'Category name should contain only alphabetic characters');
-            isValid = false;
-        }
+    //     if (name === "") {
+    //         displayErrorMessage('name-error', 'Please enter a name');
+    //         isValid = false;
+    //     } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+    //         displayErrorMessage('name-error', 'Category name should contain only alphabetic characters');
+    //         isValid = false;
+    //     }
 
-        if (description === "") {
-            displayErrorMessage("description-error", 'Please enter a description');
-            isValid = false;
-        }
-        if (parentCategory === "") {
-        displayErrorMessage('parentCategory-error', 'Please select a sub category');
-        isValid = false;
-        }
+    //     if (description === "") {
+    //         displayErrorMessage("description-error", 'Please enter a description');
+    //         isValid = false;
+    //     }
+    //     if (parentCategory === "") {
+    //     displayErrorMessage('parentCategory-error', 'Please select a sub category');
+    //     isValid = false;
+    //     }
 
-        if (status !== 'active' && status !== 'inactive') {
-            displayErrorMessage('status-error', 'Please select a valid status');
-            isValid = false;
-        }
+    //     if (status !== 'active' && status !== 'inactive') {
+    //         displayErrorMessage('status-error', 'Please select a valid status');
+    //         isValid = false;
+    //     }
 
-        return isValid;
-    }
+    //     return isValid;
+    // }
 
-    function displayErrorMessage(elementId, message) {
-        var errorElement = document.getElementById(elementId);
-        errorElement.innerText = message;
-        errorElement.style.display = 'block';
-    }
+    // function displayErrorMessage(elementId, message) {
+    //     var errorElement = document.getElementById(elementId);
+    //     errorElement.innerText = message;
+    //     errorElement.style.display = 'block';
+    // }
 
-    function clearErrorMessages() {
-        const errorElements = document.getElementsByClassName('error-message');
-        Array.from(errorElements).forEach((element) => {
-            element.innerText = "";
-            element.style.display = 'none';
-        });
-    }
+    // function clearErrorMessages() {
+    //     const errorElements = document.getElementsByClassName('error-message');
+    //     Array.from(errorElements).forEach((element) => {
+    //         element.innerText = "";
+    //         element.style.display = 'none';
+    //     });
+    // }
 
     function submitForm() {
         const name = document.getElementsByName("categoryName")[0].value;

@@ -3,13 +3,14 @@ const {Schema} = mongoose;
 
 
 const productSchema = new Schema({
-    productName:{
+    name:{
         type:String,
         required:true
     },
-    productDescription:{
+    description:{
         type:String,
-        required:true
+        required:true,
+        trim:true
     },
     category:{
         type:Schema.Types.ObjectId,
@@ -28,9 +29,10 @@ const productSchema = new Schema({
         type:Number,
         default:0
     },
-    quantity:{
+    stock:{
         type:Number,
-        default:0
+        default:0,
+        min:0// Prevents negative stock
     },
     productColors:{
         type:[String],
