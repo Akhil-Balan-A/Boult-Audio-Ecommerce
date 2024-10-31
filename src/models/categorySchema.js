@@ -9,16 +9,12 @@ const categorySchema = new mongoose.Schema({
     parentCategory:{
         type:String,
         required:true,
-        enum:['men','women','kids']//restricted to specific options
+        enum:['men','women','kids','general']//restricted to specific options
     },
     description:{
         type:String,
         required:true
     },
-    productList:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Product" // 
-    }],
     status:{
         type:Boolean,
         default:true

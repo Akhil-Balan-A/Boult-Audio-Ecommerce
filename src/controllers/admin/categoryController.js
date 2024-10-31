@@ -2,58 +2,14 @@ const Category = require('../../models/categorySchema');
 
 const loadCategoryPage = async (req, res) => {
     try {
-        // Get the search query for category name, parentCategory, status
-        const search = req.query.search || '';
-        
-        // Set pagination and limit
-        const page = parseInt(req.query.page) || 1;
-        const limit = parseInt(req.query.limit) || 4;
-        const skip = (page - 1) * limit;
-
-        // Define the filter object
-        const filter = {};
-
-        // Add search filters for name and parentCategory
-        if (search) {
-            filter.$or = [
-                { name: { $regex: ".*" + search + ".*", $options: 'i' } }, // Case-insensitive search for name
-                { description: { $regex: ".*" + search + ".*", $options: 'i' } } // Case-insensitive search for description
-            ];
-            
-            // Add parentCategory filter if search matches any parent category
-            const categories = ['men', 'women', 'kids'];
-            if (categories.includes(search.toLowerCase())) {
-                filter.parentCategory = search.toLowerCase();
-            }
-
-            // Handle status search as boolean
-            if (search.toLowerCase() === 'blocked') {
-                filter.status = false; // Show blocked categories
-            } else if (search.toLowerCase() === 'unblocked') {
-                filter.status = true; // Show unblocked categories
-            }
-        }
-
         // Fetch categories based on the filter
-        const categoryData = await Category.find(filter)
-            .populate('productList')//Populate product list to show products in each category
-            .sort({ createdAt: -1 })
-            .limit(limit)
-            .skip(skip)
-            .exec();
-
-        // Get the total category count for pagination
-        const totalCategories = await Category.countDocuments(filter);
-        const totalPages = Math.ceil(totalCategories / limit);
+        const categoryData = await Category.find({})
+        .sort({createdAt:-1})
+            
 
         // Render the page with data and pagination information
         res.render('admin/category', {
             data: categoryData,
-            currentPage: page,
-            totalPages: totalPages,
-            totalCategories: totalCategories,
-            search,
-            limit
         });
 
     } catch (error) {
@@ -63,32 +19,31 @@ const loadCategoryPage = async (req, res) => {
 };
 
 
+
 const addCategory = async(req,res)=>{
     try {
-        const {name,description,parentCategory,status}=req.body;
-        console.log('Received data:', req.body);
+        const { name, description, parentCategory, categoryOffer } = req.body;
 
         //validate the inpt fields
-        if (!name || !description || !parentCategory || typeof status === 'undefined') {
-            return res.status(400).json({
-                error: "Please provide name, description, parent category, and status."
-            });
+        if (!name || !description || !parentCategory ||!categoryOffer) {
+            return res.status(400).json({ message: 'All fields are required.' });
         }
+
         //check if the category already exists
-        const existingCategory = await Category.findOne({name});
-        if(existingCategory){
-            return res.status(400).render('admin/add-category',{
-                message:"Category already esists. Please choose a different name",
-                color:'danger'
-            });
+        const existingCategory = await Category.findOne({ name});
+        if (existingCategory) {
+            return res.status(400).json({ message: 'Category name already exists.' });
         }
+        const status = req.body.status === 'active'?true:false;
+        const categoryOfferNumber = parseFloat(categoryOffer);
 
         //create a new category object
         const newCategory = new Category({
             name,
             description,
             parentCategory,
-            status:true
+            categoryOffer:categoryOfferNumber,
+            status
 
         });
 
@@ -96,11 +51,11 @@ const addCategory = async(req,res)=>{
         await newCategory.save();
 
         //redirect to category management page to show a success message
-        return res.status(200).json({message:"Category added successfully"});
+        return res.status(201).json({ message: 'Category added successfully!'});
         
     } catch (error) {
-         console.error('Error adding category:', error.message);
-        res.status(500).json({error:"Internal Swerver Error"});
+        console.error('Error adding category:', error);
+        return res.status(500).json({ message: 'Server error.' });
         
     }
 

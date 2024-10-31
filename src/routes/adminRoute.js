@@ -5,6 +5,8 @@ const customerController = require('../controllers/admin/customerController');
 const categoryController = require('../controllers/admin/categoryController');
 const productController = require('../controllers/admin/productController')
 const adminAuth = require('../middleware/adminAuth');
+const upload = require('../config/multerConfig');
+
 //Error management
 adminRoute.get('/errorPage',adminController.errorPage);
 //Login management
@@ -25,6 +27,7 @@ adminRoute.post('/addCategory',adminAuth.isLogin,categoryController.addCategory)
 //Product Management
 adminRoute.get('/products',adminAuth.isLogin,productController.loadAllProducts);
 adminRoute.get('/addProduct',adminAuth.isLogin,productController.loadAddProductPage);
+adminRoute.post('/addProduct',upload.array('images',3),productController.addProduct)
 
 
 

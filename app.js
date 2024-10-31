@@ -1,3 +1,4 @@
+const WebSocket = require('ws');
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -47,7 +48,12 @@ app.set('views',path.join(__dirname,'src/views'));
 app.use('/Admin',express.static(path.join(__dirname,'public/Admin')));
 app.use('/User',express.static(path.join(__dirname,'public/User')));
 
-// Middleware to set session information in res.locals for admin header Name visibility wihtou send name in the render itself.
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, 'public/uploads'))); // Add this line
+
+
+// Middleware to set session information in res.locals for admin header Name visibility without sending name in the each render itself.
+//By setting data in res.locals, we can ensure that any view rendered for the request has access to that data.
 app.use((req, res, next) => {
     res.locals.adminId = req.session.adminId || null;
     res.locals.adminName = req.session.adminName || null;
@@ -73,10 +79,24 @@ app.use('/admin',adminRoute);
 
 //start server.
 const PORT = process.env.PORT || 3000;
-app.listen(PORT,()=>{
+const server = app.listen(PORT,()=>{
     console.log(`Server running on the port ${PORT}.... use npm run dev`)
 });
 
+
+// Initialize WebSocket server
+const wss = new WebSocket.Server({ server });
+
+wss.on('connection', (ws) => {
+    console.log('New client connected');
+
+    ws.on('message', (message) => {
+        console.log(`Received: ${message}`);
+        // You can broadcast messages or handle them as needed
+    });
+
+    ws.send('Hello! Message From Server!!');
+});
 
 
 

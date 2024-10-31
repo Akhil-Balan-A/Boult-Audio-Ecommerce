@@ -26,7 +26,6 @@
                 <div class="col-lg-2 col-md-3 col-6">
                     <!-- Status Filter Dropdown -->
                     <select class="form-select" onchange="filterByStatus(this.value)">
-                        <option value="">Status</option>
                         <option value="blocked" <%= status === 'blocked' ? 'selected' : '' %>>Blocked</option>
                         <option value="unblocked" <%= status === 'unblocked' ? 'selected' : '' %>>Unblocked</option>
                         <option value="all" <%= status === 'all' ? 'selected' : '' %>>Show all</option>

@@ -2,9 +2,15 @@
 
 <%-include("../../views/partials/admin/header")-%>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
-
+<style>
+      .color-box {
+        border-radius: 5px;
+        padding: 5px;
+        box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+    }
+</style>
 <section class="content-main">
-    <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()"> <!-- Call validateImages on submit -->
+    <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()"> 
         <div class="row">
             <div class="col-9">
                 <div class="content-header">
@@ -17,21 +23,46 @@
                         <!--Product Name-->
                         <div class="mb-4">
                             <label for="name" class="form-label">Product Name</label>
-                            <input type="text" name="name" id="name" class="form-control" required>
+                            <input type="text" name="name" id="name" class="form-control" >
+                            <div id="nameError" class="error-message"style="color: red; display: none;"></div>
                         </div>
 
                         <div class="mb-4">
                             <label for="category" class="form-label">Category</label>
-                            <select name="category" id="category" class="form-select" required>
+                            <select name="category" id="category" class="form-select" >
                                 <option value="" disabled selected>Select Category</option> <!-- Default select message -->
                                 <% data.forEach(data => { %>
                                     <option value="<%= data._id %>"><%= data.name %></option>
                                 <% }) %>
                             </select>
+                            <div id="categoryError" class="error-message"style="color: red; display: none;"></div>
                         </div>
                         <div class="mb-4">
-                            <label for="productColors" class="form-label">Product Colors</label>
-                            <input type="text" name="productColors" id="productColors" class="form-control" placeholder="Enter colors separated by commas (e.g., Red, Blue, Green)" required>
+                            <div class="col-md-3">
+                                <label for="productColors" class="form-label"> Select Product Colors</label>
+                                <select id="productColors" class="form-select" onchange="addColor()">
+                                    <option value=""disabled selected>Select Color</option>
+                                    <option value="black" style="background-color: black;color:white">Black</option>
+                                    <option value="blue" style="background-color: blue;color: white;">Blue</option>
+                                    <option value="green" style="background-color: green; color: white;">Green</option>
+                                    <option value="orange" style="background-color: orange; color: black;">Orange</option>
+                                    <option value="brown" style="background-color: brown; color: white;">Brown</option>
+                                    <option value="cream" style="background-color: #fffdd0; color: black;">Cream</option>
+                                    <option value="lightblue" style="background-color: lightblue; color: black;">Light Blue</option>
+                                    <option value="lightgreen" style="background-color: lightgreen; color: black;">Light Green</option>
+                                    <option value="grey" style="background-color: grey; color: white;">Grey</option>
+                                    <option value="white" style="background-color: white; color: black;">White</option>
+                                    <option value="yellow" style="background-color: yellow; color: black;">Yellow</option>
+                                    <option value="pink" style="background-color: pink; color: black;">Pink</option>
+                                    <option value="silver" style="background-color: silver; color: black;">Silver</option>
+                                    <option value="purple" style="background-color: purple; color: white;">Purple</option>
+                                    <option value="red" style="background-color: red; color: white;">Red</option>
+                                </select>
+                                <div id="colorError" class="error-message" style="color: red; display: none;"></div>
+
+                            </div>
+                            <div id="selectedColorsContainer" class="mt-2"></div>
+                            <input type="hidden" name="productColors" id="productColorsInput">
                         </div>
                     </div>
                 </div> <!-- card end// -->
@@ -41,17 +72,48 @@
                         <div>
                             <label for="description" class="form-label">Description</label>
                             <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
+                            <div id="descriptionError" class="eror-message"style="color: red; display: none;"></div>
+
                         </div>
                     </div>
                 </div> <!-- card end// -->
                 <div class="card mb-4">
                     <div class="card-body">
-                        <label for="productImages" class="form-label">Product Images</label>
-                        <input type="file" name="productImages" id="productImages" class="form-control" accept="image/*" multiple onchange="previewImage(event)" required> <!-- Enable multiple file selection -->
-                        <small class="text-muted">Choose images one by one to add, minimum 3 images required</small>
-                        <div id="imagePreview" class="mt-2"></div>
+                        <label for="productImages" class="form-label">Product Images-1</label>
+                        <input type="file" name="images" id="input1" class="form-control" accept="image/*" onchange="viewImage(event,1)" required>
+                        <div id="image-error1" class="eror-message"style="color: red; display: none;"></div>
+                    </div>
+                    <div class="image-cropper d-flex align-items-center"
+                        style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
+                        <img src="" id="croppedImg1" alt="">
+                        <button type="button" id="saveButton1" class="btn-sm btn-primary ms-4">Save</button>
                     </div>
                 </div> <!-- card end// -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <label for="productImages" class="form-label">Product Images-2</label>
+                        <input type="file" name="images" id="input2" class="form-control" accept="image/*" onchange="viewImage(event,2)" required>
+                        <div id="image-error2" class="eror-message"style="color: red; display: none;"></div>
+                    </div>
+                    <div class="image-cropper d-flex align-items-center"
+                        style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
+                        <img src="" id="croppedImg2" alt="">
+                        <button type="button" id="saveButton2" class="btn-sm btn-primary ms-4">Save</button>
+                    </div>
+                </div> <!-- card end// -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <label for="productImages" class="form-label">Product Images-3</label>
+                        <input type="file" name="images" id="input3" class="form-control" accept="image/*" onchange="viewImage(event,3)" required>
+                        <div id="image-error3" class="eror-message"style="color: red; display: none;"></div>
+                    </div>
+                    <div class="image-cropper d-flex align-items-center"
+                        style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
+                        <img src="" id="croppedImg3" alt="">
+                        <button type="button" id="saveButton3" class="btn-sm btn-primary ms-4">Save</button>
+                    </div>
+                </div> <!-- card end// -->
+                
             </div>
             <div class="col-lg-3">
                 <div class="card mb-4">
@@ -59,27 +121,37 @@
                         <div class="mb-4">
                             <label for="stock" class="form-label">Stock Quantity</label>
                             <input type="number" name="stock" id="stock" class="form-control" min="0" required>
+                            <div id="stockError" class="eror-message"style="color: red; display: none;"></div>
+
                         </div>
                         <div class="mb-4">
                             <label for="regularPrice" class="form-label">Regular Price</label>
                             <input type="number" name="regularPrice" id="regularPrice" class="form-control" min="0" required>
+                            <div id="regularPriceError" class="eror-message"style="color: red; display: none;"></div>
+
                         </div>
                         <div class="mb-4">
                             <label for="salePrice" class="form-label">Sale Price</label>
                             <input type="number" name="salePrice" id="salePrice" class="form-control" min="0" required>
+                            <div id="salesPriceError" class="eror-message"style="color: red; display: none;"></div>
+
                         </div>
                         <div class="mb-4">
                             <label for="productOffer" class="form-label">Product Offer (%)</label>
                             <input type="number" name="productOffer" id="productOffer" class="form-control" min="0" max="100" value="0">
+                            <div id="productOfferError" class="eror-message"style="color: red; display: none;"></div>
+
                         </div>
                         <div class="mb-4">
                             <label class="form-label">Product Status</label>
-                            <select name="status" class="form-select" required>
+                            <select name="status" id="status" class="form-select" required>
                                 <option value="" disabled selected>Select Status</option> <!-- Default select message -->
                                 <option value="Available">Available</option>
                                 <option value="out of stock">Out of Stock</option>
                                 <option value="Discontinued">Discontinued</option>
                             </select>
+                            <div id="statusError" class="eror-message"style="color: red; display: none;"></div>
+
                         </div>
                         <div class="mb-4">
                             <div class="d-grid">
@@ -94,3 +166,274 @@
 </section>  
 <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
 <%-include("../../views/partials/admin/footer")-%>
+<script>
+
+    function viewImage(event,index){
+        let input = event.target;
+        let reader = new FileReader();
+        reader.onload = function(){
+            let dataURL = reader.result;
+            let image = document.getElementById('croppedImg'+index);
+            image.src = dataURL;
+            let cropper = new Cropper(image,{
+                aspectRatio:1,
+                viewMode:1,
+                guides:true,
+                background:false,
+                autoCropArea:1,
+                zoomable:true
+            });
+
+            let cropperContainer = image.closest('.image-cropper');
+            cropperContainer.style.display = 'block';
+
+            let saveButton = document.getElementById('saveButton' + index);
+            saveButton.addEventListener('click',async function(){
+                let croppedCanvas = cropper.getCroppedCanvas();
+                let croppedImage = document.getElementById('croppedImg'+index);
+                croppedImage.src = croppedCanvas.toDataURL('image/*',1.0);
+
+                let timeStamp = new Date().getTime();
+                let fileName = `cropped-img-${timeStamp}-${index}.png`;
+
+                await croppedCanvas.toBlob(blob =>{
+                    let imgFile = new File([blob], fileName, { type: 'image/png' });
+                    const fileList = new DataTransfer();
+                    fileList.items.add(imgFile);
+                    input.files = fileList.files;
+                });
+                cropperContainer.style.display = 'none'
+                cropper.destroy();
+            });
+        }
+
+        reader.readAsDataURL(input.files[0]);
+
+   }
+   
+   function handleFileSelect(event) {
+      const addedImagesContainer = document.getElementById('addedImagesContainer');
+      addedImagesContainer.innerHTML = '';
+
+      const files = event.target.files;
+      for (let i = 0; i < files.length; i++) {
+         const file = files[i];
+         selectedImages.push(file);
+
+         const thumbnail = document.createElement('div');
+         thumbnail.classList.add('thumbnail');
+
+         const img = document.createElement('img');
+         img.src = URL.createObjectURL(file); // Fixed function call
+         img.alt = 'thumbnail';
+         img.style.width = '50px';
+         img.style.height = 'auto';
+
+         const removeIcon = document.createElement('span');
+         removeIcon.classList.add("remove-icon");
+         removeIcon.innerHTML = '&times;';
+         removeIcon.addEventListener('click', function () {
+            const index = selectedImages.indexOf(file);
+            if (index !== -1) { // Fixed condition
+               selectedImages.splice(index, 1);
+            }
+            thumbnail.remove();
+         });
+
+         thumbnail.appendChild(img);
+         thumbnail.appendChild(removeIcon);
+         addedImagesContainer.appendChild(thumbnail);
+      }
+   }
+
+   document.getElementById('input1').addEventListener('change', handleFileSelect);
+
+
+   function validateForm(){
+        let isValid = true;
+
+        //Validate product name.
+        const name = document.getElementById('name').value.trim();
+        if(name === ""){
+            document.getElementById('nameError').innerText = 'Product name is required';
+            document.getElementById('nameError').style.display = 'block';
+            isValid = false;
+        }else if(!/^[a-zA-Z0-9\s\-]+$/.test(name)){
+            document.getElementById('nameError').innerText = 'Product name can only contain letters, numbers, and hyphens.';
+            document.getElementById('nameError').style.display = 'block';
+            isValid = false;
+        }else{
+            document.getElementById('nameError').style.display = 'none'
+        }
+
+        //Validate category.
+        const category = document.querySelector("select[name = 'category']").value;
+        if(category === ""){
+            document.getElementById('categoryError').innerText = "Please select a category ";
+            document.getElementById('categoryError').style.display = 'block';
+            isValid = false;
+        }else{
+            document.getElementById('categoryError').style.display = 'none';
+        }
+
+        //Validate product colors.
+        const colorSelect = document.querySelector("select[name = 'productColors']").value;
+        if(colorSelect === ""){
+            document.getElementById('colorError').innerText = 'Please select a color';
+            document.getElementById('colorError').style.display = 'block';
+            isValid = false
+        }else{
+            document.getElementById('colorError').style.display = 'none';
+        }
+        //Validate description.
+        const description = document.getElementById('description').value.trim();
+        if(description === ""){
+            document.getElementById('descriptionError').innerText = 'Description is required';
+            document.getElementById('descriptionError').style.display = 'block';
+            isValid = false;
+        }else{
+            document.getElementById("descriptionError").style.display = 'none'
+        }
+        //Validate image
+        const imageInput = [document.getElementById('input1'),document.getElementById('input2'),document.getElementById('input3')];
+        let imageCount = 0;
+        imageInput.forEach((input,index)=>{
+            if(input.files.length>0){
+                // If an image is selected, hide the error message
+                document.getElementById(`image-error${index + 1}`).style.display = 'none';
+                imageCount++ // Increment the count of valid images
+
+            }else{
+                // No image selected, show error
+                document.getElementById(`image-error${index + 1}`).innerText = `Image ${index +1} is required.`;
+                document.getElementById(`image-error${index + 1}`).style.display = 'block';
+            }
+
+
+        });
+        if(imageCount <3){
+            isValid = false
+        }
+
+        //Validate stock quantity
+        const stock = document.getElementById('stock').value.trim();
+        if(stock=== '' || stock<0){
+            document.getElementById('stockError').innerText = 'Please enter a valid stock quantity.';
+            document.getElementById('stockError').style.display = 'block';
+            isValid = false
+        }else{
+            document.getElementById('stockError').style.display = 'none';
+        }
+
+        //Validate Regular Price.
+        const regularPrice = document.getElementById('regularPrice').value.trim();
+        if(regularPrice === '' || regularPrice <0){
+            document.getElementById('regularPriceError').innerText = 'Please enter a valid regular price.';
+            document.getElementById('regularPriceError').style.display = 'block';
+            isValid = false;
+        }else{
+            document.getElementById('regularPriceError').style.display = 'none';
+        }
+
+        //Validate Sale Price
+        const salePrice = document.getElementById('salePrice').value.trim();
+        if(salePrice === "" || salePrice<0){
+            document.getElementById('salesPriceError').innerText = 'Please enter a valid sale price.';
+            document.getElementById('salesPriceError').style.display = 'block';
+            isValid = false;
+        }else{
+            
+            document.getElementById('salesPriceError').style.display = 'none';
+        }
+        
+
+        // Validate Product Offer
+        const productOffer = document.getElementById("productOffer").value.trim();
+        if (productOffer < 0 || productOffer > 100) {
+            document.getElementById("ProductOfferError").innerText = "Please enter a valid offer percentage (0-100).";
+            document.getElementById("ProductOfferError").style.display = "block";
+            isValid = false;
+        } else {
+            document.getElementById("ProductOfferError").style.display = "none";
+        }
+
+        // Validate Product Status
+        const status = document.querySelector("select[name='status']").value;
+        if (status === "") {
+            document.getElementById("statusError").innerText = "Please select a product status.";
+            document.getElementById("statusError").style.display = "block";
+            isValid = false;
+        } else {
+            document.getElementById("statusError").style.display = "none";
+        }
+
+        return isValid; // Prevent form submission if any field is invalid
+
+    }
+
+   
+</script>
+<script>
+    const selectedColors = [];
+
+    // Map color names to their hex values
+    const colorMap = {
+        black: '#000000',
+        blue: '#0000FF',
+        green: '#008000',
+        orange: '#FFA500',
+        brown: '#A52A2A',
+        cream: '#FFFDD0',
+        lightblue: '#ADD8E6',
+        lightgreen: '#90EE90',
+        grey: '#808080',
+        white: '#FFFFFF',
+        yellow: '#FFFF00',
+        pink: '#FFC0CB',
+        silver: '#C0C0C0',
+        purple: '#800080',
+        red: '#FF0000',
+        
+    };
+
+    function addColor() {
+        const colorSelect = document.getElementById('productColors');
+        const selectedColor = colorSelect.value;
+
+        if (!selectedColors.includes(selectedColor)) {
+            selectedColors.push(selectedColor);
+
+            const colorBox = document.createElement('div');
+            colorBox.classList.add('color-box');
+            colorBox.style.backgroundColor = colorMap[selectedColor]; // Use the hex value from colorMap
+
+            // Determine text color based on background color brightness
+            const textColor = getContrastYIQ(colorMap[selectedColor]); // Pass the hex value
+            colorBox.style.color = textColor;
+
+            colorBox.textContent = selectedColor.charAt(0).toUpperCase() + selectedColor.slice(1);
+            colorBox.style.margin = '5px';
+            colorBox.style.padding = '10px';
+            colorBox.style.display = 'inline-block';
+
+            document.getElementById('selectedColorsContainer').appendChild(colorBox);
+
+            // Update hidden input for form submission
+            document.getElementById('productColorsInput').value = selectedColors.join(',');
+        }
+    }
+
+    // Function to determine text color based on background color
+    function getContrastYIQ(hexcolor) {
+        // Convert hex color to RGB
+        let r = parseInt(hexcolor.substring(1, 3), 16);
+        let g = parseInt(hexcolor.substring(3, 5), 16);
+        let b = parseInt(hexcolor.substring(5, 7), 16);
+        // Calculate brightness
+        let brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        return (brightness > 125) ? 'black' : 'white'; // Return black for light colors and white for dark colors
+    }
+</script>
+
+
+

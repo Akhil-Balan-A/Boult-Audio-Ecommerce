@@ -27,6 +27,7 @@ const loginAdmin = async(req,res)=>{
         }else{
             return res.render('admin/admin-login',{message:'Invalid credentials',color:'danger'})
         }
+
         
     } catch (error) {
         console.log('login error',error);

@@ -465,18 +465,22 @@
                                             <% if (success.length>0) { %>
                                               <div class="alert alert-success"><%= success %></div>
                                             <% } %>
-                                          </div>
-                                        <% if (typeof message !== 'undefined') { %>
-                                            <% if(color==='danger') { %>
-                                                <div class="alert alert-danger text-center" role="alert">
-                                                    <p><%- message %></p>
-                                                </div>
-                                            <% } else { %>
-                                                <div class="alert alert-success text-center" role="alert">
-                                                    <p><%- message %></p>
-                                                </div>
+                                        </div>
+                                          <!--for redering message-->
+                                        <div>
+                                            <% if (typeof message !== 'undefined') { %>
+                                                <% if(color==='danger') { %>
+                                                    <div class="alert alert-danger text-center" role="alert">
+                                                        <p><%- message %></p>
+                                                    </div>
+                                                <% } else { %>
+                                                    <div class="alert alert-success text-center" role="alert">
+                                                        <p><%- message %></p>
+                                                    </div>
+                                                <% } %>
                                             <% } %>
-                                        <% } %>
+                                        </div>
+                                        
                                         <form method="post" action="/login" id="loginForm">
                                             <div class="form-group">
                                                 <input type="text" required="" name="email" placeholder="Your Email" id="email">
