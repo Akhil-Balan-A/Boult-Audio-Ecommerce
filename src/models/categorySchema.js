@@ -9,7 +9,7 @@ const categorySchema = new mongoose.Schema({
     parentCategory:{
         type:String,
         required:true,
-        enum:['men','women','kids','general']//restricted to specific options
+        enum:['Men','Women','Kids','General']//restricted to specific options
     },
     description:{
         type:String,

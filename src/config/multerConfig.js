@@ -1,6 +1,14 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
+
+//ensure the target directory exists, if not make one.
+const targetDir = path.resolve('public', 'uploads', 'product-images');
+
+if(!fs.existsSync(targetDir)){
+    fs.mkdirSync(targetDir,{recursive:true})
+}
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/Admin/uploads/product-images/'); // Destination folder for images

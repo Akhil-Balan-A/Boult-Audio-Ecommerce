@@ -1,4 +1,5 @@
 const Category = require('../../models/categorySchema');
+const Product = require('../../models/productSchema')
 
 const loadCategoryPage = async (req, res) => {
     try {
@@ -61,8 +62,109 @@ const addCategory = async(req,res)=>{
 
 }
 
+const addCategoryOffer = async(req,res)=>{
+    try {
+        const percentage = parseInt(req.body.percentage);
+        const categoryId = req.body.categoryId;
+        const confirm = req.body.confirm || false;
+
+        //amount validation.
+        if(isNaN(percentage)||percentage<1||percentage>100){
+            return res.status(400).json({
+                status:false,
+                message:"Offer percentage must be between 1 and 100"
+            });
+        }
+
+        // Find the category and validate it
+
+        const category = await Category.findById(categoryId);
+        if(!category){
+            return res.status(404).json({status:false,message:"Category not found"});
+        }
+
+        const productsWithOffer = await Product.find({ category: categoryId, productOffer: { $gt: 0 } });
+
+           // If products have individual offers and no confirmation was provided, send warning
+           if (productsWithOffer.length > 0 && !confirm) {
+            return res.status(200).json({
+                status: false,
+                message: "Some products have individual offers. Confirm to apply the category discount.",
+            });
+        }
+       
+
+        // If no conflict or after confirmation, update the category with the new offer
+        category.categoryOffer = percentage;
+        await category.save();
+
+         //update the product schema with updated category offer to adjust the final price.
+         const products = await Product.find({category:categoryId});
+         for(const product of products){
+             const regularPriceValue = parseFloat(product.regularPrice);
+             const salesPriceValue = parseFloat(product.salePrice)
+             // Calculate the new final price based on the updated category offer
+             const discount = (regularPriceValue*percentage)/100;
+             product.salesPriceAfterCategoryOfferIfAny = salesPriceValue-discount;
+             await product.save(); // Save the updated product instance so that each product will get updated the discount
+
+         }
+ 
+         //send success message
+        return res.status(200).json({
+            status: true,
+            message: "Category offer added successfully and applied to Products",
+            categoryOffer: percentage
+        });
+
+
+
+    } catch (error) {
+        console.error('Error while adding category offer:', error);
+        res.status(500).json({ message: 'Failed to add offer', error });   
+    }
+
+}
+
+const removeCategoryOffer = async(req,res)=>{
+    try {
+        const categoryId = req.body.categoryId;
+        const category = await Category.findById(categoryId);
+
+        if(!category){
+            return res.status(404).json({status:false,message:'Category not found'})
+        }
+        const percentage = category.categoryOffer
+        const products = await Product.find({category:category._id});
+        if(products.length>0){
+            for(const product of products){
+                const regularPrice = parseFloat(product.regularPrice);
+                const discount = (regularPrice*percentage)/100;
+                product.salesPriceAfterCategoryOfferIfAny = product.salesPriceAfterCategoryOfferIfAny+discount;
+                await product.save();
+
+            }
+        }
+        category.categoryOffer = 0;
+        await category.save();
+        return res.json({
+            status: true
+        });
+
+        
+    } catch (error) {
+        console.error('Error while removing category offer:', error);
+        return res.status(500).json({ message: 'Failed to remove offer', error });
+        
+    }
+
+}
+
+
 module.exports={
     loadCategoryPage,
-    addCategory
+    addCategory,
+    removeCategoryOffer,
+    addCategoryOffer
     
 }

@@ -1,111 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Management</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="/path-to-bootstrap-css">
-</head>
-<body>
-    <div class="container mt-5">
-        <!-- Category Form -->
-        <h2 class="mb-4">Add New Category</h2>
-        <form method="POST" action="/admin/addCategory">
-            <div class="mb-3">
-                <label for="categoryName" class="form-label">Category Name</label>
-                <input type="text" class="form-control" id="categoryName" name="name" placeholder="Enter category name" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="parentCategory" class="form-label">Parent Category</label>
-                <select id="parentCategory" name="ParentCategory" class="form-select" required>
-                    <option value="">Select Parent Category</option>
-                    <option value="men">Men</option>
-                    <option value="women">Women</option>
-                    <option value="children">Children</option>
-                </select>
-            </div>
-
-            <div class="mb-3">
-                <label for="categoryDescription" class="form-label">Category Description</label>
-                <textarea class="form-control" id="categoryDescription" name="description" rows="3" placeholder="Enter description" required></textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="status" class="form-label">Status</label>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="status" id="active" value="true" checked>
-                    <label class="form-check-label" for="active">Active</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="status" id="inactive" value="false">
-                    <label class="form-check-label" for="inactive">Inactive</label>
-                </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Add Category</button>
-        </form>
-
-        <!-- Category List with Pagination -->
-        <h2 class="mt-5 mb-4">Category List</h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Category Name</th>
-                    <th>Parent Category</th>
-                    <th>Description</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (cat.length === 0) { %>
-                    <tr>
-                        <td colspan="6" class="text-center">No categories available</td>
-                    </tr>
-                <% } else { %>
-                    <% cat.forEach((category, index) => { %>
-                        <tr>
-                            <td><%= (currentPage - 1) * 4 + (index + 1) %></td> <!-- Serial Number -->
-                            <td><%= category.name %></td>
-                            <td><%= category.ParentCategory %></td>
-                            <td><%= category.description %></td>
-                            <td><%= category.status ? 'Active' : 'Inactive' %></td>
-                            <td>
-                                <!-- Add edit/delete buttons if needed -->
-                                <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                                <a href="#" class="btn btn-sm btn-danger">Delete</a>
-                            </td>
-                        </tr>
-                    <% }) %>
-                <% } %>
-            </tbody>
-        </table>
-
-        <!-- Pagination Controls -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <% if (currentPage > 1) { %>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
-                    </li>
-                <% } %>
-                <% for (let i = 1; i <= totalPages; i++) { %>
-                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
-                    </li>
-                <% } %>
-                <% if (currentPage < totalPages) { %>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
-                    </li>
-                <% } %>
-            </ul>
-        </nav>
-    </div>
-
-    <script src="/path-to-bootstrap-js"></script>
-</body>
-</html>
+<table>
+    <thead>
+      <tr>
+        <th>Category Name</th>
+        <th>Category Discount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Electronics</td>
+        <td>
+          <button onclick="updateOffer(1)" class="update-btn">Update</button>
+          <span id="offer-1">20%</span>
+          <button onclick="deleteOffer(1)" class="delete-btn">Delete</button>
+        </td>
+      </tr>
+      <tr>
+        <td>Fashion</td>
+        <td>
+          <button onclick="updateOffer(2)" class="update-btn">Update</button>
+          <span id="offer-2">15%</span>
+          <button onclick="deleteOffer(2)" class="delete-btn">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+   
+    /* Style the buttons to appear on left and right sides */
+    td {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  
+  </style>
+  
+  <script>
+    function updateOffer(id) {
+      Swal.fire({
+        title: 'Update Offer',
+        input: 'number',
+        inputLabel: 'Enter new offer (1-100)',
+        showCancelButton: true,
+        confirmButtonText: 'Update',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          document.getElementById(`offer-${id}`).innerText = result.value + '%';
+          Swal.fire('Updated!', 'Offer updated successfully.', 'success');
+        }
+      });
+    }
+  
+    function deleteOffer(id) {
+      document.getElementById(`offer-${id}`).innerText = 'N/A';
+      Swal.fire('Deleted!', 'Offer removed successfully.', 'info');
+    }
+  </script>
+  

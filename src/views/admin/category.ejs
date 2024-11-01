@@ -49,6 +49,18 @@
     width: 420px; /* Adjust width as needed */
     height: 40px; /* Adjust height as needed */
     }
+    /* Style for Active status */
+    .status.active {
+        color: green;
+        font-weight: bold;
+    }
+
+    /* Style for Inactive status */
+    .status.inactive {
+        color: red;
+        font-weight: bold;
+    }
+    
     
   
 
@@ -91,10 +103,10 @@
                                 <label for="parentCategory" class="form-label fw-bold">Parent Category</label>
                                 <select id="parentCategory" name="parentCategory" class="form-select border-radius" >
                                     <option value="">Select</option>
-                                    <option value="men">Men</option>
-                                    <option value="women">Women</option>
-                                    <option value="kids">Kids</option>
-                                    <option value="general">General</option>
+                                    <option value="Men">Men</option>
+                                    <option value="Women">Women</option>
+                                    <option value="Kids">Kids</option>
+                                    <option value="General">General</option>
                                 </select>
                                 <div class="error-message" id="parentCategory-error" style="color: red; display: none;"></div>
                             </div>
@@ -144,7 +156,7 @@
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Parent Category</th>
-                                        <th>Category Offer (%)</th>
+                                        <th>Category Offer(update/Remove)</th>
                                         <th>Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -155,11 +167,24 @@
                                             <td><%= category.name.trim() %></td>
                                             <td><%= category.description.trim() %></td>
                                             <td><%= category.parentCategory %></td>
-                                            <td><%= category.categoryOffer %>%</td>
-                                            <td><%= category.status ? 'Active' : 'Inactive' %></td>
+                                            <td class="text-center position-relative">
+                                                <!-- Container for layout -->
+                                                <div class="d-inline-block w-100">
+                                                    <!-- Update Button aligned to the left -->
+                                                    <button class="btn btn-danger btn-sm position-absolute start-0" style="background-color:#088178 ;border: #088178;" onclick="updateOffer('<%= category._id %>')">Update</button>
+                                            
+                                                    <!-- Offer Percentage Display centered -->
+                                                    <span class="offer mx-auto d-inline-block"><%= category.categoryOffer===0?'Nill':category.categoryOffer %>%</span>
+                                            
+                                                    <!-- Remove Button aligned to the right -->
+                                                    <button class="btn btn-danger btn-sm position-absolute end-0" onclick="removeOffer('<%= category._id %>')">Remove</button>
+                                                </div>
+                                            </td>
+
+                                            <td class="<%= category.status ? 'status active' : 'status inactive' %>"><%= category.status ? 'Active' : 'Inactive' %></td>
                                             <td class="text-end">
-                                                <div class="dropdown">
-                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-primary btn-sm font-sm">
+                                                <div class="dropdown" >
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-primary btn-sm font-sm" style="padding: 10px;">
                                                         <i class="material-icons md-more_horiz"></i>
                                                     </a>
                                                     <div class="dropdown-menu">
@@ -298,7 +323,6 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
                     title: 'Success',
                     text: data.message
                 }).then(() => {
-                    // Optionally, you can reload the page or update the UI
                     location.reload(); // Reloads the page to show the new category
                 });
             }
@@ -315,4 +339,125 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
     
     }
 });
+</script>
+
+<!--Add remov offer-->
+<script>
+    async function updateOffer(categoryId) {
+        const { value: amount } = await Swal.fire({
+            title: "Offer in percentage",
+            input: 'number',
+            inputLabel: "Percentage",
+            inputPlaceholder: "%",
+        });
+
+        if (amount) {
+            try {
+                const response = await fetch("/admin/addCategoryOffer?_method=PATCH", {
+                    method: 'POST', // Using method override to make this a PATCH request
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ percentage: amount, categoryId: categoryId })
+                });
+
+                const result = await response.json();
+
+                if(!result.status && result.message.includes("Offer percentage must be between 1 and 100")){
+                    await Swal.fire({
+                        title:'Warning',
+                        text:result.message,
+                        icon:"warning",
+                        confirmButtonText: 'OK'
+                    })
+                    return; //Exit the function after showing the warning as no need to go for further part
+
+                }
+            
+
+                // Handle warning message and confirmation
+                if (!result.status && result.message.includes("Some products have individual offers. Confirm to apply the category discount.")) {
+                    const confirmAction = await Swal.fire({
+                        title: "Warning",
+                        text: result.message,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Confirm",
+                        cancelButtonText: "Cancel",
+                    });
+
+                    // If admin confirms, retry with forced confirmation
+                    if (confirmAction.isConfirmed) {
+                        const confirmResponse = await fetch("/admin/addCategoryOffer?_method=PATCH", {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ categoryId, percentage: amount, confirm: true })
+                        });
+
+                        const confirmResult = await confirmResponse.json();
+                        await Swal.fire("Success", "Category offer added successfully", "success");
+                        location.reload(); // Reloads the page to show the new category
+                    }
+                } else if (result.status) {
+                    // If no warnings, show success message directly
+                    await Swal.fire("Success", result.message, "success");
+                    location.reload(); // Reloads the page to show the new category
+                }
+
+            } catch (error) {
+                Swal.fire(
+                    "Error",
+                    "An error occurred while adding the offer",
+                    "error"
+                );
+                console.error('Error adding offer', error);
+            }
+        }
+    }
+
+   
+
+    async function removeOffer(categoryId){
+        try {
+            const response = await fetch('/admin/removeCategoryOffer?_method=PATCH',{
+                method:'POST',
+                headers:{
+                    "content-type":"application/json"
+                },
+                body:JSON.stringify({
+                    categoryId:categoryId,
+
+                })
+            });
+
+            const data = await response.json();//data from backend
+            if(response.ok&&data.status===true){
+                Swal.fire(
+                    "Offer Removed",
+                    "Offer has been removed successfully",
+                    "success"
+                ).then(()=>{
+                    location.reload();
+                });
+            }else{
+                Swal.fire(
+                    "Failed",
+                    data.message|| "Removing offer failed",
+                    "error"
+                ).then(()=>{
+                    location.reload();
+                });
+            }
+            
+        } catch (error) {
+            Swal(
+                "Error",
+                "An error occured while removing the offer",
+                'error'
+            );
+            console.log('Error while removing offer',error)
+        }
+
+    }
+
 </script>

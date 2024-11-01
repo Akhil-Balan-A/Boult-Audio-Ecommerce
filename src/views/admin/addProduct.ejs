@@ -40,7 +40,7 @@
                         <div class="mb-4">
                             <div class="col-md-3">
                                 <label for="productColors" class="form-label"> Select Product Colors</label>
-                                <select id="productColors" class="form-select" onchange="addColor()">
+                                <select id="productColors" class="form-select" onchange="addColor()" >
                                     <option value=""disabled selected>Select Color</option>
                                     <option value="black" style="background-color: black;color:white">Black</option>
                                     <option value="blue" style="background-color: blue;color: white;">Blue</option>
@@ -71,8 +71,8 @@
                     <div class="card-body">
                         <div>
                             <label for="description" class="form-label">Description</label>
-                            <textarea name="description" id="description" class="form-control" rows="4" required></textarea>
-                            <div id="descriptionError" class="eror-message"style="color: red; display: none;"></div>
+                            <textarea name="description" id="description" class="form-control" rows="4" ></textarea>
+                            <div id="descriptionError" class="error-message"style="color: red; display: none;"></div>
 
                         </div>
                     </div>
@@ -80,8 +80,8 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <label for="productImages" class="form-label">Product Images-1</label>
-                        <input type="file" name="images" id="input1" class="form-control" accept="image/*" onchange="viewImage(event,1)" required>
-                        <div id="image-error1" class="eror-message"style="color: red; display: none;"></div>
+                        <input type="file" name="images" id="input1" class="form-control" accept="image/*" onchange="viewImage(event,1)" >
+                        <div id="image-error1" class="error-message"style="color: red; display: none;"></div>
                     </div>
                     <div class="image-cropper d-flex align-items-center"
                         style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
@@ -92,8 +92,8 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <label for="productImages" class="form-label">Product Images-2</label>
-                        <input type="file" name="images" id="input2" class="form-control" accept="image/*" onchange="viewImage(event,2)" required>
-                        <div id="image-error2" class="eror-message"style="color: red; display: none;"></div>
+                        <input type="file" name="images" id="input2" class="form-control" accept="image/*" onchange="viewImage(event,2)" >
+                        <div id="image-error2" class="error-message"style="color: red; display: none;"></div>
                     </div>
                     <div class="image-cropper d-flex align-items-center"
                         style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
@@ -104,8 +104,8 @@
                 <div class="card mb-4">
                     <div class="card-body">
                         <label for="productImages" class="form-label">Product Images-3</label>
-                        <input type="file" name="images" id="input3" class="form-control" accept="image/*" onchange="viewImage(event,3)" required>
-                        <div id="image-error3" class="eror-message"style="color: red; display: none;"></div>
+                        <input type="file" name="images" id="input3" class="form-control" accept="image/*" onchange="viewImage(event,3)" >
+                        <div id="image-error3" class="error-message"style="color: red; display: none;"></div>
                     </div>
                     <div class="image-cropper d-flex align-items-center"
                         style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
@@ -120,37 +120,38 @@
                     <div class="card-body">
                         <div class="mb-4">
                             <label for="stock" class="form-label">Stock Quantity</label>
-                            <input type="number" name="stock" id="stock" class="form-control" min="0" required>
-                            <div id="stockError" class="eror-message"style="color: red; display: none;"></div>
+                            <input type="number" name="stock" id="stock" class="form-control" min="0" >
+                            <div id="stockError" class="error-message"style="color: red; display: none;"></div>
 
                         </div>
                         <div class="mb-4">
                             <label for="regularPrice" class="form-label">Regular Price</label>
-                            <input type="number" name="regularPrice" id="regularPrice" class="form-control" min="0" required>
-                            <div id="regularPriceError" class="eror-message"style="color: red; display: none;"></div>
-
-                        </div>
-                        <div class="mb-4">
-                            <label for="salePrice" class="form-label">Sale Price</label>
-                            <input type="number" name="salePrice" id="salePrice" class="form-control" min="0" required>
-                            <div id="salesPriceError" class="eror-message"style="color: red; display: none;"></div>
+                            <input type="number" name="regularPrice" id="regularPrice" class="form-control" min="0" >
+                            <div id="regularPriceError" class="error-message"style="color: red; display: none;"></div>
 
                         </div>
                         <div class="mb-4">
                             <label for="productOffer" class="form-label">Product Offer (%)</label>
-                            <input type="number" name="productOffer" id="productOffer" class="form-control" min="0" max="100" value="0">
-                            <div id="productOfferError" class="eror-message"style="color: red; display: none;"></div>
+                            <input type="number" name="productOffer" id="productOffer" class="form-control" min="0" max="100">
+                            <div id="productOfferError" class="error-message"style="color: red; display: none;"></div>
 
                         </div>
                         <div class="mb-4">
+                            <label for="salePrice" class="form-label">Sale Price</label>
+                            <input type="number" name="salePrice" id="salePrice" class="form-control" min="0" readonly >
+                            <!-- <div id="salesPriceError" class="error-message"style="color: red; display: none;"></div> -->
+
+                        </div>
+                  
+                        <div class="mb-4">
                             <label class="form-label">Product Status</label>
-                            <select name="status" id="status" class="form-select" required>
+                            <select name="status" id="status" class="form-select" >
                                 <option value="" disabled selected>Select Status</option> <!-- Default select message -->
                                 <option value="Available">Available</option>
                                 <option value="out of stock">Out of Stock</option>
                                 <option value="Discontinued">Discontinued</option>
                             </select>
-                            <div id="statusError" class="eror-message"style="color: red; display: none;"></div>
+                            <div id="statusError" class="error-message"style="color: red; display: none;"></div>
 
                         </div>
                         <div class="mb-4">
@@ -245,7 +246,7 @@
          addedImagesContainer.appendChild(thumbnail);
       }
    }
-
+   //event listner to trigger the change 
    document.getElementById('input1').addEventListener('change', handleFileSelect);
 
 
@@ -277,7 +278,8 @@
         }
 
         //Validate product colors.
-        const colorSelect = document.querySelector("select[name = 'productColors']").value;
+        const colorSelect = document.getElementById('productColorsInput').value.trim();  
+    
         if(colorSelect === ""){
             document.getElementById('colorError').innerText = 'Please select a color';
             document.getElementById('colorError').style.display = 'block';
@@ -336,25 +338,29 @@
         }
 
         //Validate Sale Price
-        const salePrice = document.getElementById('salePrice').value.trim();
-        if(salePrice === "" || salePrice<0){
-            document.getElementById('salesPriceError').innerText = 'Please enter a valid sale price.';
-            document.getElementById('salesPriceError').style.display = 'block';
-            isValid = false;
-        }else{
+        // const salePrice = document.getElementById('salePrice').value.trim();
+        // if(salePrice === "" || salePrice<0){
+        //     document.getElementById('salesPriceError').innerText = 'Please enter a valid sale price.';
+        //     document.getElementById('salesPriceError').style.display = 'block';
+        //     isValid = false;
+        // }else{
             
-            document.getElementById('salesPriceError').style.display = 'none';
-        }
+        //     document.getElementById('salesPriceError').style.display = 'none';
+        // }
         
 
         // Validate Product Offer
         const productOffer = document.getElementById("productOffer").value.trim();
-        if (productOffer < 0 || productOffer > 100) {
-            document.getElementById("ProductOfferError").innerText = "Please enter a valid offer percentage (0-100).";
-            document.getElementById("ProductOfferError").style.display = "block";
+        if(productOffer===""){
+            document.getElementById("productOfferError").innerText = "Please enter a offer Price.";
+            document.getElementById("productOfferError").style.display = "block";
+            isValid = false;
+        }else if(productOffer < 0 || productOffer > 100) {
+            document.getElementById("productOfferError").innerText = "Please enter a valid offer percentage (0-100).";
+            document.getElementById("productOfferError").style.display = "block";
             isValid = false;
         } else {
-            document.getElementById("ProductOfferError").style.display = "none";
+            document.getElementById("productOfferError").style.display = "none";
         }
 
         // Validate Product Status
@@ -433,6 +439,29 @@
         let brightness = (r * 299 + g * 587 + b * 114) / 1000;
         return (brightness > 125) ? 'black' : 'white'; // Return black for light colors and white for dark colors
     }
+</script>
+
+<script>
+    // Function to calculate the sale price
+    function calculateSalePrice() {
+        const regularPrice = parseFloat(document.getElementById("regularPrice").value) || 0;
+        const productOffer = parseFloat(document.getElementById("productOffer").value) || 0;
+
+        if (productOffer >= 0 && productOffer <= 100) {
+            const discount = (regularPrice * productOffer) / 100;
+            const salePrice = regularPrice - discount;
+
+            // Update the salePrice field with the calculated value
+            document.getElementById("salePrice").value = salePrice.toFixed(2); // Round to 2 decimal places
+        } else {
+            document.getElementById("productOfferError").style.display = "block";
+            document.getElementById("productOfferError").innerText = "Please enter a valid offer percentage (0-100).";
+        }
+    }
+
+    // Event listeners to trigger sale price calculation
+    document.getElementById("regularPrice").addEventListener("input", calculateSalePrice);
+    document.getElementById("productOffer").addEventListener("input", calculateSalePrice);
 </script>
 
 

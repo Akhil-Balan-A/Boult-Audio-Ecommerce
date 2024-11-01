@@ -74,12 +74,7 @@ const loadAddProductPage = async(req,res)=>{
 
 const addProduct = async (req, res) => {
     try {
-        //ensure the target directory exists, if not make one.
-        const targetDir = path.resolve('public', 'uploads', 'product-images');
-
-        if(!fs.existsSync(targetDir)){
-            fs.mkdirSync(targetDir,{recursive:true})
-        }
+        
         // Validation for required fields
         const { name, category, description, stock, regularPrice, salePrice, productOffer, status } = req.body;
         console.log(req.body)
@@ -117,14 +112,27 @@ const addProduct = async (req, res) => {
                 }
             }
 
-            const categoryId = await Category.findOne({ _id: category }); // Use correct variable
-            if (!categoryId) {
+            const categoryData = await Category.findById( category ); 
+            if (!categoryData) {
                 return res.status(400).json({ message: 'Invalid category name' });
             }
+            //calculate final sales price after category offer if any.
+            const categoryOfferPercentage = parseFloat(categoryData.categoryOffer);
+            const regularPriceValue = parseFloat(regularPrice);
+            const salesPriceValue = parseFloat(salePrice);
+
+            if(categoryOfferPercentage>0){
+                const discount = ((regularPriceValue*categoryOfferPercentage)/100);
+                var finalPrice = salesPriceValue - discount
+
+            }else{
+                finalPrice = salePrice;
+            }
+
 
             const newProduct = new Product({
                 name,
-                category: categoryId._id, // Use category ID instead of name
+                category: categoryData._id, // Use category ID instead of name
                 productColors,
                 description,
                 images: images, // Store image paths after resizing
@@ -133,6 +141,7 @@ const addProduct = async (req, res) => {
                 salePrice,
                 productOffer,
                 status,
+                salesPriceAfterCategoryOfferIfAny:finalPrice
             });
 
             await newProduct.save();

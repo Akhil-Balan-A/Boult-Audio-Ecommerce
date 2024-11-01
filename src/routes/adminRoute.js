@@ -23,6 +23,8 @@ adminRoute.get('/sampleLoad',adminController.sampleLoad);
 //Category Manamgement
 adminRoute.get('/category',adminAuth.isLogin,categoryController.loadCategoryPage);
 adminRoute.post('/addCategory',adminAuth.isLogin,categoryController.addCategory);
+adminRoute.patch('/addCategoryOffer',adminAuth.isLogin,categoryController.addCategoryOffer)
+adminRoute.patch('/removeCategoryOffer',adminAuth.isLogin,categoryController.removeCategoryOffer)
 
 //Product Management
 adminRoute.get('/products',adminAuth.isLogin,productController.loadAllProducts);
@@ -30,8 +32,8 @@ adminRoute.get('/addProduct',adminAuth.isLogin,productController.loadAddProductP
 adminRoute.post('/addProduct',upload.array('images',3),productController.addProduct)
 
 
-
 module.exports = adminRoute
+
 
 
 

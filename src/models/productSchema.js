@@ -25,7 +25,11 @@ const productSchema = new Schema({
         type:Number,
         required:true
     },
-    productOffer:{
+    salesPriceAfterCategoryOfferIfAny:{//net sales price after category offer
+        type:Number,
+        required:true
+    },
+    productOffer:{// offer as per the occation or festivals or year end sales etc
         type:Number,
         default:0
     },
