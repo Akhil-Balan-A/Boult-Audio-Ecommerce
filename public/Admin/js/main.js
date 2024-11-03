@@ -51,9 +51,23 @@
 		const ps = new PerfectScrollbar(demo);
 	}
 
-	// Dark mode toogle
-	$('.darkmode').on('click', function () {
-		$('body').toggleClass("dark");
+	$(document).ready(function() {
+		// Check localStorage for dark mode preference
+		if (localStorage.getItem('darkMode') === 'enabled') {
+			$('body').addClass('dark'); // Apply dark mode class if preference is set
+		}
+	
+		// Dark mode toggle
+		$('.darkmode').on('click', function() {
+			$('body').toggleClass('dark');
+			// Save the current state to localStorage
+			if ($('body').hasClass('dark')) {
+				localStorage.setItem('darkMode', 'enabled');
+			} else {
+				localStorage.setItem('darkMode', 'disabled');
+			}
+		});
 	});
+	
 	
 })(jQuery);

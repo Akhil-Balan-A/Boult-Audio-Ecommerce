@@ -1,69 +1,98 @@
-<table>
-    <thead>
-      <tr>
-        <th>Category Name</th>
-        <th>Category Discount</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Electronics</td>
-        <td>
-          <button onclick="updateOffer(1)" class="update-btn">Update</button>
-          <span id="offer-1">20%</span>
-          <button onclick="deleteOffer(1)" class="delete-btn">Delete</button>
-        </td>
-      </tr>
-      <tr>
-        <td>Fashion</td>
-        <td>
-          <button onclick="updateOffer(2)" class="update-btn">Update</button>
-          <span id="offer-2">15%</span>
-          <button onclick="deleteOffer(2)" class="delete-btn">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Toggle Button Example</title>
   <style>
-    table {
-      width: 100%;
-      border-collapse: collapse;
+    * {
+      margin: 0;
+      font: inherit;
     }
-    th, td {
-      padding: 10px;
-      border: 1px solid #ddd;
-      text-align: center;
+
+    body, div, label {
+      display: grid;
     }
-   
-    /* Style the buttons to appear on left and right sides */
-    td {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #3c3c3c;
+      color: #fff;
     }
-  
+
+    .wrap {
+      place-self: center;
+      width: 8em;
+      height: 2em;
+      border-radius: 2em;
+      font: 2.5em ubuntu, sans-serif;
+    }
+
+    .wrap > *, .wrap::after {
+      grid-area: 1/1;
+    }
+
+    .wrap > * {
+      --not-sel: min(1, max(var(--k) - var(--i), var(--i) - var(--k)));
+      --sel: calc(1 - var(--not-sel)) ;
+    }
+
+    .wrap::after {
+      box-sizing: border-box;
+      place-self: center start;
+      z-index: 1;
+      margin: 0.25em;
+      padding: 0.05em;
+      width: 1.5em;
+      height: 1.5em;
+      border-radius: 50%;
+      transform: translate(calc(var(--k)*6em));
+      background: repeating-conic-gradient(from 9deg, #fefefe, #7e7e7e 5%, #fefefe, #7e7e7e, #fefefe 50%) content-box, linear-gradient(gainsboro, dimgray) border-box;
+      transition: transform 1s;
+      content: "";
+    }
+
+    input {
+      z-index: calc(2 + var(--not-sel));
+      width: 8em;
+      height: 2em;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    label {
+      --not-i: calc(1 - var(--i));
+      --sgn-i: calc(2*var(--i) - 1);
+      --hue: calc(75 - var(--i)*65);
+      place-content: center;
+      border-radius: inherit;
+      box-shadow: inset 0 0.125em 0.125em #212121, inset 0 0.125em 0.25em hsl(var(--hue), 80%, 40%), inset 0 -0.125em 0.125em rgba(146, 146, 146, 0.65);
+      background: linear-gradient(hsl(var(--hue), 65%, 45%), hsl(var(--hue), 65%, 65%));
+      text-indent: calc(var(--sgn-i)*var(--sel)*-1em);
+      clip-path: inset(0 calc(var(--i)*var(--not-sel)*100%) 0 calc(var(--not-i)*var(--not-sel)*100%));
+      transition: clip-path 1s, text-indent 1s;
+    }
+
+    .wrap > :nth-of-type(1) { --i: 0; }
+    .wrap > :nth-of-type(2) { --i: 1; }
   </style>
-  
+</head>
+<body>
+  <div class="wrap" role="group" aria-label="toggle" style="--k: 0">
+    <input type="radio" name="o" id="o0" checked="checked"/>
+    <label for="o0">Active</label>
+    <input type="radio" name="o" id="o1"/>
+    <label for="o1">Inactive</label>
+  </div>
   <script>
-    function updateOffer(id) {
-      Swal.fire({
-        title: 'Update Offer',
-        input: 'number',
-        inputLabel: 'Enter new offer (1-100)',
-        showCancelButton: true,
-        confirmButtonText: 'Update',
-      }).then((result) => {
-        if (result.isConfirmed) {
-          document.getElementById(`offer-${id}`).innerText = result.value + '%';
-          Swal.fire('Updated!', 'Offer updated successfully.', 'success');
-        }
-      });
-    }
-  
-    function deleteOffer(id) {
-      document.getElementById(`offer-${id}`).innerText = 'N/A';
-      Swal.fire('Deleted!', 'Offer removed successfully.', 'info');
-    }
+    addEventListener('change', e => {
+      let _t = e.target;
+      _t.parentNode.style.setProperty('--k', +_t.id.substring(1));
+      // You can add your logic here for updating the category status
+      const status = _t.id === "o0" ? "Active" : "Inactive";
+      console.log(`Category status changed to: ${status}`);
+      // Implement AJAX or Fetch request to update status in your backend if needed
+    });
   </script>
-  
+</body>
+</html>

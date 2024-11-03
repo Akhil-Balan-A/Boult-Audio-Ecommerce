@@ -1,0 +1,220 @@
+<%- include("../../views/partials/admin/sidebar") %>
+<%- include("../../views/partials/admin/header") %>
+<style>
+
+   
+</style>
+
+<!-- DataTable CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/4.0.1/css/fixedHeader.dataTables.min.css">
+
+<!-- SweetAlert 2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Categories</h2>
+            <p>View and Edit Category</p>
+        </div>
+    </div>
+
+    <header class="card-header">  
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-5">
+                        <form class="p-4 shadow-sm rounded " method="post" id="formSubmission">
+                            <div>
+                                <input type="hidden" name="categoryId" id="categoryId" value="<%=category._id%>">
+                            </div>
+                            <!-- Category Name -->
+                            <div class="mb-4">
+                                <label for="categoryName" class="form-label fw-bold">Category Name</label>
+                                <input type="text" placeholder="Type here" name="categoryName" class="form-control border-radius" id="categoryName" value="<%=category.name%>" >
+                                <div class="error-message" id="categoryName-error" style="color: red; display: none;"></div>
+                            </div>
+
+                            <!-- Parent Category -->
+                            <div class="mb-4">
+                                <label for="parentCategory" class="form-label fw-bold">Parent Category</label>
+                                <select id="parentCategory" name="parentCategory" class="form-select border-radius" >
+                                    <option value="" >Select</option>                                    
+                                    <option value="Men" <%= category.parentCategory === 'Men' ? 'selected' : '' %>>Men</option>
+                                    <option value="Women" <%= category.parentCategory === 'Women' ? 'selected' : '' %>>Women</option>
+                                    <option value="Kids" <%= category.parentCategory === 'Kids' ? 'selected' : '' %>>Kids</option>
+                                    <option value="General" <%= category.parentCategory === 'General' ? 'selected' : '' %>>General</option>
+                                </select>
+                                <div class="error-message" id="parentCategory-error" style="color: red; display: none;"></div>
+                            </div>
+
+                            <!-- Status -->
+                            <div class="mb-4">
+                                <label for="status" class="form-label fw-bold">Status</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="active" value="active" <%= category.status === true ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="active">Active</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="status" id="inactive" value="inactive" <%= category.status === false ? 'checked' : '' %>>
+                                    <label class="form-check-label" for="inactive">Inactive</label>
+                                </div>
+                                <div class="error-message" id="status-error" style="color: red; display: none;"></div>
+
+                            </div>
+
+                            <!-- Category Offer -->
+                            <div class="mb-4">
+                                <label for="categoryOffer" class="form-label fw-bold">Category Offer (%)</label>
+                                <input type="number" class="form-control" name="categoryOffer" id="categoryOffer" placeholder="Enter offer percentage" value="<%=category.categoryOffer%>" >
+                                <div class="error-message" id="categoryOffer-error" style="color: red; display: none;"></div>
+                            </div>
+
+                            <!-- Category Description -->
+                            <div class="mb-4">
+                                <label for="categoryDescription" class="form-label fw-bold">Category Description</label>
+                                <textarea placeholder="Type here" class="form-control border-radius-lg" name="categoryDescription" id="categoryDescription" ><%= category.description %></textarea>
+                                <div class="error-message" id="categoryDescription-error" style="color: red; display: none;"></div>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg border-radius-lg">Create Category</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+</section>
+<%- include("../../views/partials/admin/footer") %>
+
+<!-- DataTable Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/4.0.1/js/dataTables.fixedHeader.min.js"></script>
+<!-- SweetAlert 2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<script>
+
+
+document.getElementById('formSubmission').addEventListener("submit", (event) => {
+    event.preventDefault();
+    let isValid = true;
+
+    const categoryId = document.getElementById('categoryId').value;
+    const name = document.getElementById('categoryName').value.trim();
+    const description = document.getElementById('categoryDescription').value.trim();
+    const parentCategory = document.getElementById('parentCategory').value;
+    const categoryOffer = document.getElementById('categoryOffer').value;
+    const status = document.querySelector('input[name="status"]:checked') ? document.querySelector('input[name="status"]:checked').value : '';
+
+
+    // Category Name Validation
+    if (!name) {
+        document.getElementById("categoryName-error").innerHTML = 'Category name is required';
+        document.getElementById('categoryName-error').style.display = 'block';
+        isValid = false;
+    } else if (!/^[a-zA-Z]+( [a-zA-Z]+)*$/.test(name)) {
+        document.getElementById('categoryName-error').innerHTML = "Name can only contain letters and spaces between words";
+        document.getElementById('categoryName-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById('categoryName-error').style.display = 'none';
+    }
+
+    // Parent Category Validation
+    if (!parentCategory) {
+        document.getElementById('parentCategory-error').innerHTML = "Please select a Parent Category";
+        document.getElementById('parentCategory-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById("parentCategory-error").style.display = 'none';
+    }
+    // status validation
+
+    if(status === ""){
+        document.getElementById('status-error').innerHTML = "Please select the status";
+        document.getElementById('status-error').style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById("status-error").style.display = 'none';
+    }
+
+    // Category Offer Validation
+    if(categoryOffer===""){
+        document.getElementById('categoryOffer-error').innerHTML = 'Category offer is required'
+        document.getElementById('categoryOffer-error').style.display = 'block'
+        isValid = false
+    }else if( categoryOffer < 0 || categoryOffer > 100) {
+        document.getElementById("categoryOffer-error").innerHTML = "Category offer should be between 0 and 100";
+        document.getElementById("categoryOffer-error").style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById("categoryOffer-error").style.display = 'none';
+    }
+
+    // Description Validation
+    if (!description) {
+        document.getElementById("categoryDescription-error").innerHTML = "Description is required";
+        document.getElementById("categoryDescription-error").style.display = 'block';
+        isValid = false;
+    } else {
+        document.getElementById("categoryDescription-error").style.display = 'none';
+    }
+
+    if (isValid) {
+       
+
+        fetch('/admin/editCategory?_method=PUT', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({name,description,parentCategory,status,categoryOffer,categoryId})
+
+            //can use below type also where we dont want to set the headers and it will take directly
+            //name from the form and send in body like below code
+            // body: new FormData(document.getElementById('formSubmission')),
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errorData => {
+                    throw new Error(errorData.message); // Create an error with the message
+            });
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Handle the successful response (show a Swal notification)
+            if (data.message) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: data.message
+                }).then(() => {
+                    location.reload(); // Reloads the page to show the new category
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error happend:', error);
+            Swal.fire({
+                title: 'Oops!',
+                text: error.message,
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        });
+    
+    }
+});
+</script>

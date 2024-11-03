@@ -25,22 +25,23 @@ const addCategory = async(req,res)=>{
     try {
         const { name, description, parentCategory, categoryOffer } = req.body;
 
-        //validate the inpt fields
+        //validate the input fields
         if (!name || !description || !parentCategory ||!categoryOffer) {
             return res.status(400).json({ message: 'All fields are required.' });
         }
 
-        //check if the category already exists
-        const existingCategory = await Category.findOne({ name});
+        // Check if the category already exists (case-insensitive)
+        const existingCategory = await Category.findOne({ name: new RegExp(`^${name}$`, 'i')});
         if (existingCategory) {
             return res.status(400).json({ message: 'Category name already exists.' });
         }
+        // Convert status to boolean and categoryOffer to number
         const status = req.body.status === 'active'?true:false;
         const categoryOfferNumber = parseFloat(categoryOffer);
 
-        //create a new category object
+        // Create a new category object with the name in lowercase
         const newCategory = new Category({
-            name,
+            name:name.toLowerCase(),
             description,
             parentCategory,
             categoryOffer:categoryOfferNumber,
@@ -160,11 +161,116 @@ const removeCategoryOffer = async(req,res)=>{
 
 }
 
+const activateCategory = async(req,res)=>{
+    try {
+        const {categoryId} = req.body
+        if(!categoryId){
+            return res.status(400).json({status:false, message: 'No category found' });
+        }
+        await Category.updateOne({_id:categoryId},{$set:{status:true}});
+        return res.status(200).json({
+            status: true,
+            message: 'Category activated successfully'
+        });
+    } catch (error) {
+        console.log('error while status activation',error)
+        res.redirect('/errorPage');
+    }
+
+}
+
+const inactivateCategory = async(req,res)=>{
+    try {
+        const {categoryId} = req.body;
+        if(!categoryId){
+            return res.status(400 ).json({status:false, message: 'No category found' });
+        }
+        await Category.updateOne({_id:categoryId},{$set:{status:false}});
+        return res.status(200).json({
+            status: true,
+            message: 'Category deactivated successfully'
+        });
+    } catch (error) {
+        console.log('error while status activation',error)
+        res.redirect('/errorPage');    
+    }
+
+}
+
+const loadEditCategory = async(req,res)=>{
+    try {
+        const categoryId = req.query.id;
+        const category = await Category.findById(categoryId)
+        res.render('admin/edit-category',{category})
+        
+    } catch (error) {
+        console.log('error while loading editCategory page',error)
+        res.redirect('/errorPage');   
+    }
+}
+
+
+const editCategory = async(req,res)=>{
+    try {
+        const { name, description, parentCategory, categoryOffer,categoryId } = req.body;
+
+        //validate the inpt fields
+        if (!name || !description || !parentCategory ||!categoryOffer) {
+            return res.status(400).json({ message: 'All fields are required.' });
+        }
+
+        //check if the category already exists
+        const category = await Category.findById(categoryId);
+        if (category) {
+            return res.status(400).json({ message: 'Category name already exists.' });
+        }
+        const status = req.body.status === 'active'?true:false;
+        const categoryOfferNumber = parseFloat(categoryOffer);
+        if(categoryOfferNumber!==category.categoryOffer){
+            const productsWithOffer = await Product.find({ category: category._id, productOffer: { $gt: 0 } });
+
+           // If products have individual offers and no confirmation was provided, send warning
+        //    if (productsWithOffer.length > 0 && !confirm) {
+        //         return res.status(200).json({
+        //         status: false,
+        //         message: "Some products have individual offers. Confirm to apply the category discount.",
+        //         });
+        //     }
+
+        }
+
+        //create a new category object
+        const newCategory = new Category({
+            name,
+            description,
+            parentCategory,
+            categoryOffer:categoryOfferNumber,
+            status
+
+        });
+
+        //save the new category to the database.
+        await newCategory.save();
+
+        //redirect to category management page to show a success message
+        return res.status(201).json({ message: 'Category edited successfully!'});
+
+        
+    } catch (error) {
+        console.log('error while  editCategory ',error)
+        res.redirect('/errorPage');   
+        
+    }
+}
 
 module.exports={
     loadCategoryPage,
     addCategory,
     removeCategoryOffer,
-    addCategoryOffer
+    addCategoryOffer,
+    activateCategory,
+    inactivateCategory,
+    loadEditCategory,
+    editCategory
     
 }

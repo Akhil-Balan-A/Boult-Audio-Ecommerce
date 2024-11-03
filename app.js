@@ -67,7 +67,6 @@ app.use((req, res, next) => {
     next();
   });
 
-
 //for user routes.
 const userRoute = require('./src/routes/userRoute');
 app.use('/',userRoute);
@@ -97,6 +96,8 @@ const server = app.listen(PORT,()=>{
 
 //     ws.send('Hello! Message From Server!!');
 // });
+
+
 
 
 

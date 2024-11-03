@@ -49,17 +49,26 @@
     width: 420px; /* Adjust width as needed */
     height: 40px; /* Adjust height as needed */
     }
-    /* Style for Active status */
-    .status.active {
-        color: green;
-        font-weight: bold;
+
+    .btn-switch {
+        position: relative;
+        color: white;
+        background-color: gray;
+        border: skyblue;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: background-color 0.3s ease;
+        font-size: 14px;
+        
+      
+
     }
 
-    /* Style for Inactive status */
-    .status.inactive {
-        color: red;
-        font-weight: bold;
+    .btn-switch.Active {
+        background-color: #17a2b8;
     }
+
+    
     
     
   
@@ -68,6 +77,7 @@
 
    
 </style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
 <!-- DataTable CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -90,7 +100,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3">
-                        <form class="p-4 shadow-sm rounded bg-white" method="post" id="formSubmission">
+                        <form class="p-4 shadow-sm rounded " method="post" id="formSubmission">
                             <!-- Category Name -->
                             <div class="mb-4">
                                 <label for="categoryName" class="form-label fw-bold">Category Name</label>
@@ -150,46 +160,55 @@
                     <!-- Table Display -->
                     <div class="col-md-9">
                         <div class="table-responsive">
-                            <table class="table table-hover display" id="myTable">
+                            <table class="table table-hover display bg-black" id="myTable">
                                 <thead>
                                     <tr>
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Parent Category</th>
-                                        <th>Category Offer(update/Remove)</th>
-                                        <th>Status</th>
+                                        <th>Set Category Offer </th>
+                                        <th>Set Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <% data.forEach(category => { %>
                                         <tr>
-                                            <td><%= category.name.trim() %></td>
-                                            <td><%= category.description.trim() %></td>
+                                            <td><%= category.name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %>
+                                            </td>
+                                            <td><%= category.description%></td>
                                             <td><%= category.parentCategory %></td>
-                                            <td class="text-center position-relative">
-                                                <!-- Container for layout -->
-                                                <div class="d-inline-block w-100">
+                                            <td class="text-center">
+                                                <!-- Flex container for better alignment -->
+                                                <div class="d-flex justify-content-between align-items-center flex-column flex-md-row">
                                                     <!-- Update Button aligned to the left -->
-                                                    <button class="btn btn-danger btn-sm position-absolute start-0" style="background-color:#088178 ;border: #088178;" onclick="updateOffer('<%= category._id %>')">Update</button>
-                                            
-                                                    <!-- Offer Percentage Display centered -->
-                                                    <span class="offer mx-auto d-inline-block"><%= category.categoryOffer===0?'Nill':category.categoryOffer %>%</span>
-                                            
+                                                    <button class="btn btn-success btn-sm" style="color: white;" onclick="updateOffer('<%= category._id %>')">Update</button>
+                                                    
+                                                    <!-- Centered Offer Percentage Display -->
+                                                    <span class="offer mx-2"><%= category.categoryOffer === 0 ? 'Nill' : category.categoryOffer %>%</span>
+                                                    
                                                     <!-- Remove Button aligned to the right -->
-                                                    <button class="btn btn-danger btn-sm position-absolute end-0" onclick="removeOffer('<%= category._id %>')">Remove</button>
+                                                    <button class="btn btn-danger btn-sm" onclick="removeOffer('<%= category._id %>')">Remove</button>
                                                 </div>
                                             </td>
-
-                                            <td class="<%= category.status ? 'status active' : 'status inactive' %>"><%= category.status ? 'Active' : 'Inactive' %></td>
+                                            <td>
+                                                <button 
+                                                    id="switchBtn<%= category._id %>" 
+                                                    class="btn-switch <%= category.status ? 'Active' : 'Inactive' %> btn-sm font-sm" 
+                                                    data-category-id="<%= category._id %>"
+                                                    data-category-status="<%= category.status %>"
+                                                    onclick="updateCategoryStatus(this)">
+                                                    <%= category.status ? 'Active' : 'Inactive' %>
+                                                </button>
+                                            </td>                                           
                                             <td class="text-end">
                                                 <div class="dropdown" >
                                                     <a href="#" data-bs-toggle="dropdown" class="btn btn-primary btn-sm font-sm" style="padding: 10px;">
                                                         <i class="material-icons md-more_horiz"></i>
                                                     </a>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="#">View/Edit info</a>
-                                                        <a class="dropdown-item text-danger" href="#">Delete</a>
+                                                        <a class="dropdown-item" href="/admin/editCategory?id=<%=category._id%>">View/Edit info</a>
+                                                        <a class="dropdown-item text-danger" href="/admin/deleteCategory?id=<%=category._id%>">Delete</a>
                                                     </div>
                                                 </div>
                                             </td>
@@ -415,8 +434,6 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
         }
     }
 
-   
-
     async function removeOffer(categoryId){
         try {
             const response = await fetch('/admin/removeCategoryOffer?_method=PATCH',{
@@ -460,4 +477,50 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
 
     }
 
+</script>
+<script>
+    function updateCategoryStatus(button) {
+        const categoryId = button.getAttribute('data-category-id');
+        const categoryStatus = button.getAttribute('data-category-status') === 'true'; // Convert to boolean
+
+        fetch(`/admin/${categoryStatus ? 'inactivateCategory' : 'activateCategory'}?_method=PATCH`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ categoryId }) // Fix typo here
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === true ) {
+                Swal.fire({
+                    title: 'Success',
+                    text: data.message,
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                }).then(() => {
+                    // Update button status and text on successful activation/inactivation
+                    button.setAttribute('data-category-status', !categoryStatus); // Toggle status
+                    button.textContent = !categoryStatus ? 'Active' : 'Inactive'; // Toggle text
+                    button.classList.toggle('Active'); // Add/remove Active class
+                });
+            } else {
+                Swal.fire({
+                    title: 'Failed',
+                    text: data.message || 'Server error occurred',
+                    icon: "error",
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                title: 'Error',
+                text: 'An unexpected error occurred.',
+                icon: "error",
+                confirmButtonText: 'OK'
+            });
+        });
+    }
 </script>

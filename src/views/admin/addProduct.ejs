@@ -77,83 +77,88 @@
                         </div>
                     </div>
                 </div> <!-- card end// -->
+                <div class= "card mb-4">
+                    <div class="col-md-5">
+                        <div class="card-body">   
+                            <div>
+                                <label for="stock" class="form-label">Stock Quantity</label>
+                                <input type="number" name="stock" id="stock" class="form-control" min="0" >
+                                <div id="stockError" class="error-message"style="color: red; display: none;"></div>
+
+                            </div>
+                            <div>
+                                <label for="regularPrice" class="form-label">Regular Price</label>
+                                <input type="number" name="regularPrice" id="regularPrice" class="form-control" min="0" >
+                                <div id="regularPriceError" class="error-message"style="color: red; display: none;"></div>
+
+                            </div>
+                            <div>
+                                <label for="productOffer" class="form-label">Product Offer (%)</label>
+                                <input type="number" name="productOffer" id="productOffer" class="form-control" min="0" max="100">
+                                <div id="productOfferError" class="error-message"style="color: red; display: none;"></div>
+
+                            </div>
+                            <div>
+                                <label for="salePrice" class="form-label">Sale Price</label>
+                                <input type="number" name="salePrice" id="salePrice" class="form-control" min="0" readonly >
+                                <div id="salesPriceError" class="error-message"style="color: red; display: none;"></div>
+
+                            </div>
+                        </div>    
+                    </div>   
+                </div>     
                 <div class="card mb-4">
                     <div class="card-body">
-                        <label for="productImages" class="form-label">Product Images-1</label>
-                        <input type="file" name="images" id="input1" class="form-control" accept="image/*" onchange="viewImage(event,1)" >
-                        <div id="image-error1" class="error-message"style="color: red; display: none;"></div>
+                        <label class="form-label">Product Status</label>
+                        <select name="status" id="status" class="form-select" >
+                            <option value="" disabled selected>Select Status</option> <!-- Default select message -->
+                            <option value="Available">Available</option>
+                            <option value="out of stock">Out of Stock</option>
+                            <option value="Discontinued">Discontinued</option>
+                        </select>
+                        <div id="statusError" class="error-message"style="color: red; display: none;"></div>
                     </div>
-                    <div class="image-cropper d-flex align-items-center"
-                        style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
-                        <img src="" id="croppedImg1" alt="">
-                        <button type="button" id="saveButton1" class="btn-sm btn-primary ms-4">Save</button>
-                    </div>
-                </div> <!-- card end// -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <label for="productImages" class="form-label">Product Images-2</label>
-                        <input type="file" name="images" id="input2" class="form-control" accept="image/*" onchange="viewImage(event,2)" >
-                        <div id="image-error2" class="error-message"style="color: red; display: none;"></div>
-                    </div>
-                    <div class="image-cropper d-flex align-items-center"
-                        style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
-                        <img src="" id="croppedImg2" alt="">
-                        <button type="button" id="saveButton2" class="btn-sm btn-primary ms-4">Save</button>
-                    </div>
-                </div> <!-- card end// -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <label for="productImages" class="form-label">Product Images-3</label>
-                        <input type="file" name="images" id="input3" class="form-control" accept="image/*" onchange="viewImage(event,3)" >
-                        <div id="image-error3" class="error-message"style="color: red; display: none;"></div>
-                    </div>
-                    <div class="image-cropper d-flex align-items-center"
-                        style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
-                        <img src="" id="croppedImg3" alt="">
-                        <button type="button" id="saveButton3" class="btn-sm btn-primary ms-4">Save</button>
-                    </div>
-                </div> <!-- card end// -->
-                
+                </div>  
             </div>
-            <div class="col-lg-3">
+            <div class="col-lg-5">
                 <div class="card mb-4">
                     <div class="card-body">
-                        <div class="mb-4">
-                            <label for="stock" class="form-label">Stock Quantity</label>
-                            <input type="number" name="stock" id="stock" class="form-control" min="0" >
-                            <div id="stockError" class="error-message"style="color: red; display: none;"></div>
-
-                        </div>
-                        <div class="mb-4">
-                            <label for="regularPrice" class="form-label">Regular Price</label>
-                            <input type="number" name="regularPrice" id="regularPrice" class="form-control" min="0" >
-                            <div id="regularPriceError" class="error-message"style="color: red; display: none;"></div>
-
-                        </div>
-                        <div class="mb-4">
-                            <label for="productOffer" class="form-label">Product Offer (%)</label>
-                            <input type="number" name="productOffer" id="productOffer" class="form-control" min="0" max="100">
-                            <div id="productOfferError" class="error-message"style="color: red; display: none;"></div>
-
-                        </div>
-                        <div class="mb-4">
-                            <label for="salePrice" class="form-label">Sale Price</label>
-                            <input type="number" name="salePrice" id="salePrice" class="form-control" min="0" readonly >
-                            <!-- <div id="salesPriceError" class="error-message"style="color: red; display: none;"></div> -->
-
-                        </div>
-                  
-                        <div class="mb-4">
-                            <label class="form-label">Product Status</label>
-                            <select name="status" id="status" class="form-select" >
-                                <option value="" disabled selected>Select Status</option> <!-- Default select message -->
-                                <option value="Available">Available</option>
-                                <option value="out of stock">Out of Stock</option>
-                                <option value="Discontinued">Discontinued</option>
-                            </select>
-                            <div id="statusError" class="error-message"style="color: red; display: none;"></div>
-
-                        </div>
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <label for="productImages" class="form-label">Product Images-1</label>
+                                <input type="file" name="images" id="input1" class="form-control" accept="image/*" onchange="viewImage(event,1)" style=" height: auto;">
+                                <div id="image-error1" class="error-message"style="color: red; display: none;"></div>
+                            </div>
+                            <div class="image-cropper d-flex align-items-center"
+                                style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
+                                <img src="" id="croppedImg1" alt=""style="width: 220px; height: auto;padding: 20px;"  >
+                                <button type="button" id="saveButton1" class="btn-sm btn-primary ms-4">Save</button>
+                            </div>
+                        </div> <!-- card end// -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <label for="productImages" class="form-label">Product Images-2</label>
+                                <input type="file" name="images" id="input2" class="form-control" accept="image/*" onchange="viewImage(event,2)" style=" height: auto;">
+                                <div id="image-error2" class="error-message"style="color: red; display: none;"></div>
+                            </div>
+                            <div class="image-cropper d-flex align-items-center"
+                                style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
+                                <img src="" id="croppedImg2" alt="" style="width: 220px; height: auto;padding: 20px;" >
+                                <button type="button" id="saveButton2" class="btn-sm btn-primary ms-4">Save</button>
+                            </div>
+                        </div> <!-- card end// -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <label for="productImages" class="form-label">Product Images-3</label>
+                                <input type="file" name="images" id="input3" class="form-control" accept="image/*" onchange="viewImage(event,3)" style=" height: auto;">
+                                <div id="image-error3" class="error-message"style="color: red; display: none;"></div>
+                            </div>
+                            <div class="image-cropper d-flex align-items-center"
+                                style="display: none; width: 300px;height: 200px;margin-bottom: 20px;">
+                                <img src="" id="croppedImg3" alt="" style="width: 220px; height: auto;padding: 20px;" >
+                                <button type="button" id="saveButton3" class="btn-sm btn-primary ms-4">Save</button>
+                            </div>
+                        </div> <!-- card end// -->
                         <div class="mb-4">
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary">Add Product</button>
@@ -337,16 +342,16 @@
             document.getElementById('regularPriceError').style.display = 'none';
         }
 
-        //Validate Sale Price
-        // const salePrice = document.getElementById('salePrice').value.trim();
-        // if(salePrice === "" || salePrice<0){
-        //     document.getElementById('salesPriceError').innerText = 'Please enter a valid sale price.';
-        //     document.getElementById('salesPriceError').style.display = 'block';
-        //     isValid = false;
-        // }else{
+        // Validate Sale Price
+        const salePrice = document.getElementById('salePrice').value.trim();
+        if(salePrice === "" || salePrice<0){
+            document.getElementById('salesPriceError').innerText = 'Please enter a valid sale price.';
+            document.getElementById('salesPriceError').style.display = 'block';
+            isValid = false;
+        }else{
             
-        //     document.getElementById('salesPriceError').style.display = 'none';
-        // }
+            document.getElementById('salesPriceError').style.display = 'none';
+        }
         
 
         // Validate Product Offer
