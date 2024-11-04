@@ -29,6 +29,8 @@ adminRoute.patch('/activateCategory',adminAuth.isLogin,categoryController.activa
 adminRoute.patch('/inactivateCategory',adminAuth.isLogin,categoryController.inactivateCategory);
 adminRoute.get('/editCategory',adminAuth.isLogin,categoryController.loadEditCategory);
 adminRoute.put('/editCategory',adminAuth.isLogin,categoryController.editCategory)
+adminRoute.put('/editCategory',adminAuth.isLogin,categoryController.editCategory)
+adminRoute.delete('/deleteCategory/:id',adminAuth.isLogin,categoryController.deleteCategory)
 //Product Management
 adminRoute.get('/products',adminAuth.isLogin,productController.loadAllProducts);
 adminRoute.get('/addProduct',adminAuth.isLogin,productController.loadAddProductPage);

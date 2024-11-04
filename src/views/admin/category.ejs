@@ -207,8 +207,9 @@
                                                         <i class="material-icons md-more_horiz"></i>
                                                     </a>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="/admin/editCategory?id=<%=category._id%>">View/Edit info</a>
-                                                        <a class="dropdown-item text-danger" href="/admin/deleteCategory?id=<%=category._id%>">Delete</a>
+                                                        <a class="dropdown-item" href="/admin/editCategory?id=<%= category._id %>">View/Edit info</a>
+                                                        <a class="dropdown-item text-danger" href="#" onclick="deleteCategory('<%= category._id %>'); return false;">Delete</a>
+                                                        <!-- Here, return false; prevents the link from navigating, ensuring the deleteCategory function is called instead.-->
                                                     </div>
                                                 </div>
                                             </td>
@@ -523,4 +524,58 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
             });
         });
     }
+</script>
+
+
+<!--Delete category-->
+<script>
+    function deleteCategory(categoryId){
+        Swal.fire({
+            title:'Are you sure?',
+            text:'This action cannot be undone!',
+            icon: 'warning',
+            showCancelButton:true,
+            confirmButtonText:'Yes, delete it!',
+            cancelButtonText: 'No, cancel'
+        }).then((result)=>{
+            if(result.isConfirmed){
+                fetch(`/admin/deleteCategory/${categoryId}`,{
+                    method:'DELETE',
+                    headers:{
+                        'Content-Type':'application/json'
+                    }
+                })
+                .then(response =>{
+                    if(!response.ok){
+                        return response.json().then(errorData =>{
+                            throw new Error(errorData.message)
+                        })
+                    }
+                    return response.json();
+
+                })
+                .then(data=>{
+                    if(data.success){
+                        Swal.fire({
+                            icon:'success',
+                            title:'Deleted!',
+                            text:'Category has been deleted',
+                        }).then(()=>{
+                            location.reload()//reload the page to reflect the deletion
+                        });
+                    }
+                }).catch(error=>{
+                    console.log('Error while deleting the category',error);
+                    Swal.fire({
+                        title:'Oops',
+                        text:error.message || 'An error occured while deleting the category.',
+                        icon:'error',
+                        confirmButtonText:'OK'
+                    })
+                })
+
+            }
+        })
+    }
+
 </script>

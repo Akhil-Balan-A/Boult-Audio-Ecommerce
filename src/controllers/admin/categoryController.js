@@ -212,48 +212,55 @@ const loadEditCategory = async(req,res)=>{
 
 const editCategory = async(req,res)=>{
     try {
-        const { name, description, parentCategory, categoryOffer,categoryId } = req.body;
+        const { name, description, parentCategory, categoryOffer,categoryId,confirm } = req.body;
 
         //validate the inpt fields
         if (!name || !description || !parentCategory ||!categoryOffer) {
-            return res.status(400).json({ message: 'All fields are required.' });
+            return res.status(400).json({status:false,message: 'All fields are required.' });
         }
 
-        //check if the category already exists
-        const category = await Category.findById(categoryId);
-        if (category) {
-            return res.status(400).json({ message: 'Category name already exists.' });
+
+        // Find the existing category to edit
+        const existingCategory = await Category.findById(categoryId);
+        if (!existingCategory) {
+            return res.status(404).json({status:false, message: 'Category not found' });
         }
+
+        // Check if a category with the same name other than the category currently being edited (categoryId) (case-insensitive) 
+        const duplicateCategory = await Category.findOne({name:new RegExp(`^${name}$`, 'i'),_id:{$ne:categoryId}});
+        if(duplicateCategory){
+            return res.status(400).json({status:false,message:"Category name already exists"});
+        }
+
+        // Convert status to boolean and categoryOffer to number
         const status = req.body.status === 'active'?true:false;
         const categoryOfferNumber = parseFloat(categoryOffer);
-        if(categoryOfferNumber!==category.categoryOffer){
-            const productsWithOffer = await Product.find({ category: category._id, productOffer: { $gt: 0 } });
 
-           // If products have individual offers and no confirmation was provided, send warning
-        //    if (productsWithOffer.length > 0 && !confirm) {
-        //         return res.status(200).json({
-        //         status: false,
-        //         message: "Some products have individual offers. Confirm to apply the category discount.",
-        //         });
-        //     }
+        // Check if category offer changed
+        if(categoryOfferNumber!==existingCategory.categoryOffer){
+            //category offer changed, so let the admin warn if products in the category has any product level offer
+            const productsWithOffer = await Product.find({ category: existingCategory._id, productOffer: { $gt: 0 } });
+           if (productsWithOffer.length > 0 && !confirm) {
+                return res.status(200).json({
+                status: false,
+                message: "Some products have individual offers. Confirm to apply the category discount.",
+                });
+            }
 
         }
 
-        //create a new category object
-        const newCategory = new Category({
-            name,
-            description,
-            parentCategory,
-            categoryOffer:categoryOfferNumber,
-            status
+        //update the category fields
+       existingCategory.name = name.toLowerCase();
+       existingCategory.description = description;
+       existingCategory.parentCategory = parentCategory;
+       existingCategory.categoryOffer = categoryOffer;
+       existingCategory.status = status;
 
-        });
-
-        //save the new category to the database.
-        await newCategory.save();
+        //save the updated category.
+        await existingCategory.save();
 
         //redirect to category management page to show a success message
-        return res.status(201).json({ message: 'Category edited successfully!'});
+        return res.status(201).json({ status:true,message: 'Category edited successfully!'});
 
         
     } catch (error) {
@@ -261,6 +268,24 @@ const editCategory = async(req,res)=>{
         res.redirect('/errorPage');   
         
     }
+}
+
+
+const deleteCategory = async(req,res)=>{
+    try {
+        const categoryId = req.params.id;
+        const result = await Category.findById(categoryId);
+        if(!result){
+            return res.status(404).json({success:false,message:'Category not found'});
+        }
+        res.status(200).json({success:true,message:'Category deleted successfully'})
+
+    } catch (error) {
+        console.log('error while  deleting the category ',error)
+        res.redirect('/errorPage');   
+        
+    }
+
 }
 
 module.exports={
@@ -271,6 +296,7 @@ module.exports={
     activateCategory,
     inactivateCategory,
     loadEditCategory,
-    editCategory
+    editCategory,
+    deleteCategory
     
 }

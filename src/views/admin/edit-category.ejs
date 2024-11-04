@@ -12,7 +12,6 @@
 <!-- SweetAlert 2 CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 
-
 <section class="content-main">
     <div class="content-header">
         <div>
@@ -21,44 +20,54 @@
         </div>
     </div>
 
-    <header class="card-header">  
+    <header class="card-header">
         <div class="card">
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-5">
                         <form class="p-4 shadow-sm rounded " method="post" id="formSubmission">
                             <div>
+                                <!--it is more secure to send user id as form values rather than sending as params in url-->
                                 <input type="hidden" name="categoryId" id="categoryId" value="<%=category._id%>">
                             </div>
                             <!-- Category Name -->
                             <div class="mb-4">
                                 <label for="categoryName" class="form-label fw-bold">Category Name</label>
-                                <input type="text" placeholder="Type here" name="categoryName" class="form-control border-radius" id="categoryName" value="<%=category.name%>" >
-                                <div class="error-message" id="categoryName-error" style="color: red; display: none;"></div>
+                                <input type="text" placeholder="Type here" name="categoryName"
+                                    class="form-control border-radius" id="categoryName" value="<%=category.name%>">
+                                <div class="error-message" id="categoryName-error" style="color: red; display: none;">
+                                </div>
                             </div>
 
                             <!-- Parent Category -->
                             <div class="mb-4">
                                 <label for="parentCategory" class="form-label fw-bold">Parent Category</label>
-                                <select id="parentCategory" name="parentCategory" class="form-select border-radius" >
-                                    <option value="" >Select</option>                                    
-                                    <option value="Men" <%= category.parentCategory === 'Men' ? 'selected' : '' %>>Men</option>
-                                    <option value="Women" <%= category.parentCategory === 'Women' ? 'selected' : '' %>>Women</option>
-                                    <option value="Kids" <%= category.parentCategory === 'Kids' ? 'selected' : '' %>>Kids</option>
-                                    <option value="General" <%= category.parentCategory === 'General' ? 'selected' : '' %>>General</option>
+                                <select id="parentCategory" name="parentCategory" class="form-select border-radius">
+                                    <option value="">Select</option>
+                                    <option value="Men" <%=category.parentCategory==='Men' ? 'selected' : '' %>>Men
+                                    </option>
+                                    <option value="Women" <%=category.parentCategory==='Women' ? 'selected' : '' %>
+                                        >Women</option>
+                                    <option value="Kids" <%=category.parentCategory==='Kids' ? 'selected' : '' %>>Kids
+                                    </option>
+                                    <option value="General" <%=category.parentCategory==='General' ? 'selected' : '' %>
+                                        >General</option>
                                 </select>
-                                <div class="error-message" id="parentCategory-error" style="color: red; display: none;"></div>
+                                <div class="error-message" id="parentCategory-error" style="color: red; display: none;">
+                                </div>
                             </div>
 
                             <!-- Status -->
                             <div class="mb-4">
                                 <label for="status" class="form-label fw-bold">Status</label>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="status" id="active" value="active" <%= category.status === true ? 'checked' : '' %>>
+                                    <input class="form-check-input" type="radio" name="status" id="active"
+                                        value="active" <%=category.status===true ? 'checked' : '' %>>
                                     <label class="form-check-label" for="active">Active</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="status" id="inactive" value="inactive" <%= category.status === false ? 'checked' : '' %>>
+                                    <input class="form-check-input" type="radio" name="status" id="inactive"
+                                        value="inactive" <%=category.status===false ? 'checked' : '' %>>
                                     <label class="form-check-label" for="inactive">Inactive</label>
                                 </div>
                                 <div class="error-message" id="status-error" style="color: red; display: none;"></div>
@@ -68,29 +77,33 @@
                             <!-- Category Offer -->
                             <div class="mb-4">
                                 <label for="categoryOffer" class="form-label fw-bold">Category Offer (%)</label>
-                                <input type="number" class="form-control" name="categoryOffer" id="categoryOffer" placeholder="Enter offer percentage" value="<%=category.categoryOffer%>" >
-                                <div class="error-message" id="categoryOffer-error" style="color: red; display: none;"></div>
+                                <input type="number" class="form-control" name="categoryOffer" id="categoryOffer"
+                                    placeholder="Enter offer percentage" value="<%=category.categoryOffer%>">
+                                <div class="error-message" id="categoryOffer-error" style="color: red; display: none;">
+                                </div>
                             </div>
 
                             <!-- Category Description -->
                             <div class="mb-4">
                                 <label for="categoryDescription" class="form-label fw-bold">Category Description</label>
-                                <textarea placeholder="Type here" class="form-control border-radius-lg" name="categoryDescription" id="categoryDescription" ><%= category.description %></textarea>
-                                <div class="error-message" id="categoryDescription-error" style="color: red; display: none;"></div>
+                                <textarea placeholder="Type here" class="form-control border-radius-lg"
+                                    name="categoryDescription"
+                                    id="categoryDescription"><%= category.description %></textarea>
+                                <div class="error-message" id="categoryDescription-error"
+                                    style="color: red; display: none;"></div>
                             </div>
 
                             <!-- Submit Button -->
                             <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg border-radius-lg">Create Category</button>
+                                <button type="submit" class="btn btn-primary btn-lg border-radius-lg"> Update
+                                    Category</button>
                             </div>
                         </form>
                     </div>
-
-                    
-                        </div>
-                    </div>
                 </div>
             </div>
+        </div>
+        </div>
         </div>
     </header>
 </section>
@@ -116,7 +129,7 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
     const parentCategory = document.getElementById('parentCategory').value;
     const categoryOffer = document.getElementById('categoryOffer').value;
     const status = document.querySelector('input[name="status"]:checked') ? document.querySelector('input[name="status"]:checked').value : '';
-
+    
 
     // Category Name Validation
     if (!name) {
@@ -173,43 +186,91 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
 
     if (isValid) {
        
-
+        let confirm = false;
         fetch('/admin/editCategory?_method=PUT', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body:JSON.stringify({name,description,parentCategory,status,categoryOffer,categoryId})
+            body:JSON.stringify({name,description,parentCategory,status,categoryOffer,categoryId,confirm})
 
-            //can use below type also where we dont want to set the headers and it will take directly
-            //name from the form and send in body like below code
+            //can use below type also where we dont want to set the headers and it will take directly form values
+            //from the form and send in body like below code
             // body: new FormData(document.getElementById('formSubmission')),
         })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(errorData => {
-                    throw new Error(errorData.message); // Create an error with the message
-            });
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Handle the successful response (show a Swal notification)
-            if (data.message) {
+        .then(response => response.json())
+        .then(data =>{
+            if(data.status === false && data.message.includes('Confirm')){
+                //show confirm alert
+                Swal.fire({
+                    title: 'Warning',
+                    text: data.message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Confirm',
+                    cancelButtonText: 'Cancel'
+                }).then(result =>{
+                    if(result.isConfirmed){
+                        //resend request with confirm = true
+                        fetch('/admin/editCategory?_method=PUT',{
+                            method:'POST',
+                            headers:{
+                                'Content-type':'application/json'
+                            },
+                            body:JSON.stringify({name,description,parentCategory,categoryOffer,categoryId,confirm:true})
+                        })
+                        .then(response => response.json())
+                        .then(data =>{
+                            if(data.message && data.status === true){
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Success',
+                                    text: data.message
+                                }).then(() => {
+                                    location.reload()
+                                });
+
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            Swal.fire({
+                                title: 'Oops!',
+                                text: 'An unexpected error occurred.',
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        });
+                    }
+                })
+            }else if(data.status===false && data.message){
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops',
+                    text: data.message,
+                    confirmButtonText: 'OK'
+
+                }).then(() => {
+                    location.reload() //reload to reflect the change
+                });
+
+            }else{
                 Swal.fire({
                     icon: 'success',
                     title: 'Success',
-                    text: data.message
+                    text: data.message,
+
                 }).then(() => {
-                    location.reload(); // Reloads the page to show the new category
+                     location.reload()
                 });
+
             }
         })
         .catch(error => {
-            console.error('Error happend:', error);
+            console.error('Error:', error);
             Swal.fire({
                 title: 'Oops!',
-                text: error.message,
+                text: 'An unexpected error occurred.',
                 icon: 'error',
                 confirmButtonText: 'OK'
             });
@@ -217,4 +278,5 @@ document.getElementById('formSubmission').addEventListener("submit", (event) => 
     
     }
 });
+
 </script>
