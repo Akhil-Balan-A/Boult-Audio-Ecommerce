@@ -1,4 +1,3 @@
-// const WebSocket = require('ws'); //footer featurs no need
 const express = require('express');
 const app = express();
 const path = require('path');
@@ -82,20 +81,6 @@ const server = app.listen(PORT,()=>{
     console.log(`Server running on the port ${PORT}.... use npm run dev`)
 });
 
-
-// // Initialize WebSocket server
-// const wss = new WebSocket.Server({ server });
-
-// wss.on('connection', (ws) => {
-//     console.log('New client connected');
-
-//     ws.on('message', (message) => {
-//         console.log(`Received: ${message}`);
-//         // You can broadcast messages or handle them as needed
-//     });
-
-//     ws.send('Hello! Message From Server!!');
-// });
 
 
 

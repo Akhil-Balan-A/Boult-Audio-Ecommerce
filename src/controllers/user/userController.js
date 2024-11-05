@@ -480,7 +480,6 @@ const login = async(req,res)=>{
         };
         // Store user id into the session object user
         req.session.userId = user._id;
-        console.log(req.session.userId)
         req.flash("success", "Successfully logged in!");
 
         // Redirect to home after successful login

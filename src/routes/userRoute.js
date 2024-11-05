@@ -25,7 +25,7 @@ const nocache = require('nocache');
 
 // User Routes
 userRoute.get('/errorPage',userController.errorPage)
-userRoute.get('/',userController.loadHomePage);
+userRoute.get('/',userAuth.isLogin,userController.loadHomePage);
 userRoute.get('/login',userAuth.isLogout,userController.loadLogin);
 userRoute.get('/signup',userAuth.isLogout,userController.loadSignup);
 userRoute.post('/signup',userController.signupUser);
