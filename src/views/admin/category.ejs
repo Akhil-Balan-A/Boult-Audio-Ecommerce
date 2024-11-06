@@ -90,8 +90,8 @@
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title">Categories</h2>
-            <p>Add, edit, view, or delete a category</p>
+            <h2 class="content-title card-title">Category Management</h2>
+            <p>Perform actions: update or remove offers, edit status, view, or delete categories.</p>
         </div>
     </div>
 
@@ -166,7 +166,7 @@
                                         <th>Name</th>
                                         <th>Description</th>
                                         <th>Parent Category</th>
-                                        <th>Set Category Offer </th>
+                                        <th>Update/Remove Category Offer </th>
                                         <th>Set Status</th>
                                         <th class="text-end">Action</th>
                                     </tr>
@@ -178,7 +178,7 @@
                                             </td>
                                             <td><%= category.description%></td>
                                             <td><%= category.parentCategory %></td>
-                                            <td class="text-center">
+                                            <td class="text-center" style="border: 1px solid grey;">
                                                 <!-- Flex container for better alignment -->
                                                 <div class="d-flex justify-content-between align-items-center flex-column flex-md-row">
                                                     <!-- Update Button aligned to the left -->

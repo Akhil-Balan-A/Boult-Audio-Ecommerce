@@ -35,6 +35,8 @@ adminRoute.delete('/deleteCategory/:id',adminAuth.isLogin,categoryController.del
 adminRoute.get('/products',adminAuth.isLogin,productController.loadAllProducts);
 adminRoute.get('/addProduct',adminAuth.isLogin,productController.loadAddProductPage);
 adminRoute.post('/addProduct',upload.array('images',3),productController.addProduct);
+adminRoute.patch('/admin/addProductOffer',adminAuth.isLogin,productController.addProductOffer)
+// adminRoute.patch('/admin/addProductOffer',adminAuth.isLogin,productController.addProductOffer)
 
 
 module.exports = adminRoute

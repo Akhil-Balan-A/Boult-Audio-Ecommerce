@@ -2,6 +2,8 @@
 
 <%-include("../../views/partials/admin/header")-%>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 <style>
       .color-box {
         border-radius: 5px;
@@ -10,6 +12,39 @@
     }
 </style>
 <section class="content-main">
+    <!--flash message based Sweetalert-->
+    <!--On the initial page load, if there are no flash messages, the error and success variables 
+    will still exist but will be empty. Since the  blocks evaluate as true (even when error and success 
+    are empty strings), it will causing the SweetAlert to trigger so always check length.-->
+    
+    <% if (success&&success.length>0) { %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success',
+                    text: '<%= success %>',
+                    showConfirmButton: true,
+                    timer: 3000
+                });
+            });
+        </script>
+    <% } %>
+    
+    <% if (error&&error.length>0) { %>
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '<%= error %>',
+                    showConfirmButton: true,
+                    timer: 3000
+                });
+            });
+        </script>
+    <% } %>
+    
     <form action="/admin/addProduct" method="post" enctype="multipart/form-data" onsubmit="return validateForm()"> 
         <div class="row">
             <div class="col-9">
@@ -171,6 +206,9 @@
     </form>    
 </section>  
 <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+
 <%-include("../../views/partials/admin/footer")-%>
 <script>
 
@@ -429,7 +467,7 @@
 
             document.getElementById('selectedColorsContainer').appendChild(colorBox);
 
-            // Update hidden input for form submission
+            // Update the colors to the  hidden input for form submission
             document.getElementById('productColorsInput').value = selectedColors.join(',');
         }
     }

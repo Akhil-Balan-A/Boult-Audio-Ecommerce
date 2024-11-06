@@ -1,210 +1,420 @@
+<%- include("../../views/partials/admin/sidebar") %>
+<%- include("../../views/partials/admin/header") %>
+<style>
+    /* Table styling */
+    .table-responsive table {
+        border-collapse: separate;
+        border-spacing: 0;
+        width: 100%;
+        margin-bottom: 1rem;
+        background-color: #fff;
+    }
+    .table thead th {
+        background-color: rgba(8, 129, 120, 0.2);
+        font-weight: 600;
+        text-align: left;
+    }
+    .table-hover tbody tr:hover {
+        background-color: #f1f3f5;
+    }
+    /* Align action buttons to the right */
+    .text-end {
+        text-align: right;
+    }
+    .content-main {
+        padding: 1.5rem;
+        background-color: #f4f6f9;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    /* Custom styles for modern dropdown */
+    .dropdown-menu {
+        border-radius: 0.5rem;
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+        transform-origin: top;
+        animation: dropdown-animation 0.3s ease-in-out;
+    }
+    .dropdown-item {
+        padding: 8px 16px;
+        font-weight: 500;
+        color: #333;
+        transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .dropdown-item:hover {
+        background-color: #f0f0f5;
+        color: #007bff;
+    }
+    #dt-search-0 {
+    width: 420px; /* Adjust width as needed */
+    height: 40px; /* Adjust height as needed */
+    }
 
-<%-include("../../views/partials/admin/sidebar")-%>
+    .btn-switch {
+        position: relative;
+        color: white;
+        background-color: green;
+        border: skyblue;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: background-color 0.3s ease;
+        font-size: 14px;
+        
+      
 
-<%-include("../../views/partials/admin/header")-%>
+    }
+
+    .btn-switch.Unblocked {
+        background-color:red;
+    }
+
+    
+    
+    
+  
+
+
+
+   
+</style>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<!-- DataTable CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/fixedheader/4.0.1/css/fixedHeader.dataTables.min.css">
+
+<!-- SweetAlert 2 CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
 
 <section class="content-main">
     <div class="content-header">
         <div>
-            <h2 class="content-title card-title">Products grid</h2>
-            <p>Lorem ipsum dolor sit amet.</p>
-        </div>
-        <div>
-            <a href="#" class="btn btn-light rounded font-md">Export</a>
-            <a href="#" class="btn btn-light rounded  font-md">Import</a>
-            <a href="#" class="btn btn-primary btn-sm rounded">Create new</a>
+            <h2 class="content-title card-title">Manage Products</h2>
+            <p>Perform actions: add offers, block or unblock, edit details, or delete items.</p>
         </div>
     </div>
-    <div class="card mb-4">
-        <header class="card-header">
-            <div class="row gx-3">
-                <div class="col-lg-4 col-md-6 me-auto">
-                    <input type="text" placeholder="Search..." class="form-control">
-                </div>
-                <div class="col-lg-2 col-6 col-md-3">
-                    <select class="form-select">
-                        <option>All category</option>
-                        <option>Electronics</option>
-                        <option>Clothings</option>
-                        <option>Something else</option>
-                    </select>
-                </div>
-                <div class="col-lg-2 col-6 col-md-3">
-                    <select class="form-select">
-                        <option>Latest added</option>
-                        <option>Cheap first</option>
-                        <option>Most viewed</option>
-                    </select>
+
+    <header class="card-header">  
+        <div class="card">
+            <div class="card-body">
+                <div class="row">  
+                    <!-- Table Display -->
+                    
+                        <div class="table-responsive">
+                            <table class="table table-hover display bg-black" id="myTable">
+                                <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Category</th>
+                                        <th>Quantity</th>
+                                        <th>Regular Price</th>
+                                        <th>Update/Remove Product Offer</th>
+                                        <th>Sales Price</th>
+                                        <th>Block/Unblock Product</th>
+                                        <th class="text-end">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% products.forEach(product => { %>
+                                        <tr>
+                                            <td><%= product.name.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ') %></td>
+                                            <td><%= product.category.name%></td>
+                                            <td class="text-center"><%= product.stock%></td>
+                                            <td class="text-center"><%= product.regularPrice%></td>
+                                            <td class="text-center" style="border: 1px solid grey;">
+                                                <!-- Flex container for better alignment -->
+                                                <div class="d-flex justify-content-between align-items-center flex-column flex-md-row">
+                                                    <!-- Update Button aligned to the left -->
+                                                    <button class="btn btn-success btn-sm" style="color: white;" onclick="updateOffer('<%= product._id %>')">Update</button>
+                                                    
+                                                    <!-- Centered Offer Percentage Display -->
+                                                    <span class="offer mx-2"><%= product.productOffer === 0 ? 'Nill' : product.productOffer %>%</span>
+                                                    
+                                                    <!-- Remove Button aligned to the right -->
+                                                    <button class="btn btn-danger btn-sm" onclick="removeOffer('<%= product._id %>')">Remove</button>
+                                                </div>
+                                            </td>
+                                            <td class="text-center"><%=product.salePrice%></td>
+                                            <td class="text-center">
+                                                <button 
+                                                    id="switchBtn<%= product._id %>" 
+                                                    class="btn-switch <%= product.isBlocked ? 'Blocked' : 'Unblocked' %> btn-sm font-sm" 
+                                                    data-product-id="<%= product._id %>"
+                                                    data-product-isBlocked="<%= product.isBlocked %>"
+                                                    onclick="updateCategoryStatus(this)">
+                                                    <%= product.isBlocked ? 'Unblock' : 'Block' %>
+                                                </button>
+                                            </td>                                           
+                                            <td class="text-end">
+                                                <div class="dropdown" >
+                                                    <a href="#" data-bs-toggle="dropdown" class="btn btn-primary btn-sm font-sm" style="padding: 10px;">
+                                                        <i class="material-icons md-more_horiz"></i>
+                                                    </a>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item" href="/admin/editCategory?id=<%= product._id %>">View/Edit info</a>
+                                                        <a class="dropdown-item text-danger" href="#" onclick="deleteCategory('<%= product._id %>'); return false;">Delete</a>
+                                                        <!-- Here, return false; prevents the link from navigating, ensuring the deleteCategory function is called instead.-->
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <% }) %>
+                                </tbody>
+                            </table>
+                        </div>
                 </div>
             </div>
-        </header> <!-- card-header end// -->
-        <div class="card-body">
-            <div class="row gx-3 row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-xl-4 row-cols-xxl-5">
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/1.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Just another product name</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/2.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Brown Winter Jacket for Men</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/3.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Jeans short new model</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/4.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Travel Bag XL</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/5.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Just another product name</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/6.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Just another product name</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/7.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Just another product name</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/8.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Apple Airpods CB-133</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/9.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Apple Airpods CB-133</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-                <div class="col">
-                    <div class="card card-product-grid">
-                        <a href="#" class="img-wrap"> <img src="assets/imgs/items/10.jpg" alt="Product"> </a>
-                        <div class="info-wrap">
-                            <a href="#" class="title text-truncate">Apple Airpods CB-133</a>
-                            <div class="price mb-2">$179.00</div> <!-- price.// -->
-                            <a href="#" class="btn btn-sm font-sm rounded btn-brand">
-                                <i class="material-icons md-edit"></i> Edit
-                            </a>
-                            <a href="#" class="btn btn-sm font-sm btn-light rounded">
-                                <i class="material-icons md-delete_forever"></i> Delete
-                            </a>
-                        </div>
-                    </div> <!-- card-product  end// -->
-                </div> <!-- col.// -->
-            </div> <!-- row.// -->
-        </div> <!-- card-body end// -->
-    </div> <!-- card end// -->
-    <div class="pagination-area mt-30 mb-50">
-        <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-start">
-                <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                <li class="page-item"><a class="page-link" href="#">02</a></li>
-                <li class="page-item"><a class="page-link" href="#">03</a></li>
-                <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                <li class="page-item"><a class="page-link" href="#">16</a></li>
-                <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-            </ul>
-        </nav>
-    </div>
+        </div>
+    </header>
 </section>
+<%- include("../../views/partials/admin/footer") %>
 
-<%-include("../../views/partials/admin/footer")-%>
+<!-- DataTable Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/fixedheader/4.0.1/js/dataTables.fixedHeader.min.js"></script>
+<!-- SweetAlert 2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<script>
+$(document).ready(function () {
+    $('#myTable').DataTable({
+        fixedHeader: true,
+        lengthMenu: [8, 20, 50, 100],
+        pageLength: 8,
+        responsive: true,
+        language: {
+            search: "_INPUT_",
+            searchPlaceholder: "Search Products, category, blocked status, offer price etc..."
+        },
+        
+    });
+
+});
+
+</script>
+
+<!--Add remov offer -->
+<script>
+    async function updateOffer(productId) {
+        const { value: amount } = await Swal.fire({
+            title: "Offer in percentage",
+            input: 'number',
+            inputLabel: "Percentage",
+            inputPlaceholder: "%",
+        });
+
+        if (amount) {
+            try {
+                const response = await fetch("/admin/addProductOffer", {
+                    method: 'PATCH', // Using method override to make this a PATCH request
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ percentage: amount, productId: productId })
+                });
+
+                const result = await response.json();
+
+                if(!result.status && result.message.includes("Offer percentage must be between 1 and 100")){
+                    await Swal.fire({
+                        title:'Warning',
+                        text:result.message,
+                        icon:"warning",
+                        confirmButtonText: 'OK'
+                    })
+                    return; //Exit the function after showing the warning as no need to go for further part
+
+                }
+            
+
+                // Handle warning message and confirmation
+                if (!result.status && result.message.includes("This product's category already has an offer of")) {
+                    const confirmAction = await Swal.fire({
+                        title: "Warning",
+                        text: result.message,
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Confirm",
+                        cancelButtonText: "Cancel",
+                    });
+
+                    // If admin confirms, retry with forced confirmation
+                    if (confirmAction.isConfirmed) {
+                        const confirmResponse = await fetch("/admin/addCategoryOffer", {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ categoryId, percentage: amount, confirm: true })
+                        });
+
+                        const confirmResult = await confirmResponse.json();
+                        await Swal.fire("Success", "Category offer added successfully", "success");
+                        location.reload(); // Reloads the page to show the new category
+                    }
+                } else if (result.status) {
+                      // If no conflicts, show success message with updated product info
+                     await Swal.fire({
+                    title: "Success",
+                    text: result.message,
+                    icon: "success",
+                    confirmButtonText: 'OK'
+                    });
+
+                }
+
+            } catch (error) {
+                Swal.fire(
+                    "Error",
+                    "An error occurred while adding the offer",
+                    "error"
+                );
+                console.error('Error adding offer', error);
+            }
+        }
+    }
+
+    // async function removeOffer(categoryId){
+    //     try {
+    //         const response = await fetch('/admin/removeCategoryOffer?_method=PATCH',{
+    //             method:'POST',
+    //             headers:{
+    //                 "content-type":"application/json"
+    //             },
+    //             body:JSON.stringify({
+    //                 categoryId:categoryId,
+
+    //             })
+    //         });
+
+    //         const data = await response.json();//data from backend
+    //         if(response.ok&&data.status===true){
+    //             Swal.fire(
+    //                 "Offer Removed",
+    //                 "Offer has been removed successfully",
+    //                 "success"
+    //             ).then(()=>{
+    //                 location.reload();
+    //             });
+    //         }else{
+    //             Swal.fire(
+    //                 "Failed",
+    //                 data.message|| "Removing offer failed",
+    //                 "error"
+    //             ).then(()=>{
+    //                 location.reload();
+    //             });
+    //         }
+            
+    //     } catch (error) {
+    //         Swal(
+    //             "Error",
+    //             "An error occured while removing the offer",
+    //             'error'
+    //         );
+    //         console.log('Error while removing offer',error)
+    //     }
+
+    // }
+
+</script>
+<script>
+    // function updateCategoryStatus(button) {
+    //     const categoryId = button.getAttribute('data-category-id');
+    //     const categoryStatus = button.getAttribute('data-category-status') === 'true'; // Convert to boolean
+
+    //     fetch(`/admin/${categoryStatus ? 'inactivateCategory' : 'activateCategory'}?_method=PATCH`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify({ categoryId }) // Fix typo here
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data.status === true ) {
+    //             Swal.fire({
+    //                 title: 'Success',
+    //                 text: data.message,
+    //                 icon: "success",
+    //                 confirmButtonText: 'OK'
+    //             }).then(() => {
+    //                 // Update button status and text on successful activation/inactivation
+    //                 button.setAttribute('data-category-status', !categoryStatus); // Toggle status
+    //                 button.textContent = !categoryStatus ? 'Active' : 'Inactive'; // Toggle text
+    //                 button.classList.toggle('Active'); // Add/remove Active class
+    //             });
+    //         } else {
+    //             Swal.fire({
+    //                 title: 'Failed',
+    //                 text: data.message || 'Server error occurred',
+    //                 icon: "error",
+    //                 confirmButtonText: 'OK'
+    //             });
+    //         }
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error);
+    //         Swal.fire({
+    //             title: 'Error',
+    //             text: 'An unexpected error occurred.',
+    //             icon: "error",
+    //             confirmButtonText: 'OK'
+    //         });
+    //     });
+    // }
+</script>
+
+
+<!--Delete category-->
+<script>
+    // function deleteCategory(categoryId){
+    //     Swal.fire({
+    //         title:'Are you sure?',
+    //         text:'This action cannot be undone!',
+    //         icon: 'warning',
+    //         showCancelButton:true,
+    //         confirmButtonText:'Yes, delete it!',
+    //         cancelButtonText: 'No, cancel'
+    //     }).then((result)=>{
+    //         if(result.isConfirmed){
+    //             fetch(`/admin/deleteCategory/${categoryId}`,{
+    //                 method:'DELETE',
+    //                 headers:{
+    //                     'Content-Type':'application/json'
+    //                 }
+    //             })
+    //             .then(response =>{
+    //                 if(!response.ok){
+    //                     return response.json().then(errorData =>{
+    //                         throw new Error(errorData.message)
+    //                     })
+    //                 }
+    //                 return response.json();
+
+    //             })
+    //             .then(data=>{
+    //                 if(data.success){
+    //                     Swal.fire({
+    //                         icon:'success',
+    //                         title:'Deleted!',
+    //                         text:'Category has been deleted',
+    //                     }).then(()=>{
+    //                         location.reload()//reload the page to reflect the deletion
+    //                     });
+    //                 }
+    //             }).catch(error=>{
+    //                 console.log('Error while deleting the category',error);
+    //                 Swal.fire({
+    //                     title:'Oops',
+    //                     text:error.message || 'An error occured while deleting the category.',
+    //                     icon:'error',
+    //                     confirmButtonText:'OK'
+    //                 })
+    //             })
+
+    //         }
+    //     })
+    // }
+
+</script>

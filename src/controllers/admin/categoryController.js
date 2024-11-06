@@ -83,7 +83,7 @@ const addCategoryOffer = async(req,res)=>{
         if(!category){
             return res.status(404).json({status:false,message:"Category not found"});
         }
-
+        //find product have same category and has product level offer
         const productsWithOffer = await Product.find({ category: categoryId, productOffer: { $gt: 0 } });
 
            // If products have individual offers and no confirmation was provided, send warning
